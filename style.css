@@ -1,0 +1,157 @@
+/* Remove all margins and make the page full screen */
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+/* Map takes up the entire screen */
+#map {
+    width: 100vw;
+    height: 100vh;
+}
+/* Visual dot to show gaze position (for testing with mouse) */
+#gaze-dot {
+    position: fixed;
+    width: 16px;
+    height: 16px;
+    background: rgba(255, 0, 0, 0.6);
+    border: 2px solid white;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 3000;
+    transform: translate(-50%, -50%);
+    display: none;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+}
+
+/* Edge highlight - clean and subtle */
+.edge-highlight {
+    position: fixed;
+    background: rgba(59, 130, 246, 0.15);
+    box-shadow: inset 0 0 30px rgba(59, 130, 246, 0.3);
+    pointer-events: none;
+    z-index: 2500;
+    opacity: 0;
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+/* AprilTags - positioned in corners and edges of screen */
+.apriltag {
+    position: fixed;
+    aspect-ratio: 1 / 1; 
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    z-index: 1500;
+    pointer-events: none;
+}
+
+.apriltag img {
+    /* no selecting img */
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Fix for tags with transform in HTML (2, 5, 6, 9) */
+.apriltag[data-id="2"],
+.apriltag[data-id="5"],
+.apriltag[data-id="6"],
+.apriltag[data-id="9"] {
+    transition: none; /* Remove transition for these */
+}
+
+/* Tag pop effect when looking at it */
+.apriltag.tag-active {
+    transform: scale(1.15) !important;
+    z-index: 1600;
+}
+
+/* Special handling for tags with inline transform */
+.apriltag[data-id="2"].tag-active {
+    transform: translateX(-50%) scale(1.15) !important;
+}
+
+.apriltag[data-id="5"].tag-active {
+    transform: translateY(-50%) scale(1.15) !important;
+}
+
+.apriltag[data-id="6"].tag-active {
+    transform: translateY(-50%) scale(1.15) !important;
+}
+
+.apriltag[data-id="9"].tag-active {
+    transform: translateX(-50%) scale(1.15) !important;
+}
+
+/* Load actual AprilTag images 
+.apriltag[data-id="0"] { background-image: url('tag_0.png'); }
+.apriltag[data-id="1"] { background-image: url('tag_1.png'); }
+.apriltag[data-id="2"] { background-image: url('tag_2.png'); }
+.apriltag[data-id="3"] { background-image: url('tag_3.png'); }
+.apriltag[data-id="4"] { background-image: url('tag_4.png'); }
+.apriltag[data-id="5"] { background-image: url('tag_5.png'); }
+.apriltag[data-id="6"] { background-image: url('tag_6.png'); }
+.apriltag[data-id="7"] { background-image: url('tag_7.png'); }
+.apriltag[data-id="8"] { background-image: url('tag_8.png'); }
+.apriltag[data-id="9"] { background-image: url('tag_9.png'); }
+.apriltag[data-id="10"] { background-image: url('tag_10.png'); }
+.apriltag[data-id="11"] { background-image: url('tag_11.png'); } */
+
+/* Remove the text overlay since we're showing real images */
+.apriltag::before {
+    content: '';
+}
+
+/* You can hide tags after calibration by adding this class to body */
+body.hide-tags .apriltag {
+    display: none;
+}
+
+/* Center indicator for zoom activation */
+#center-indicator {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    /* 80x80 SVG, posuneme o polovinu zpět */
+    transform: translate(-40px, -40px);
+    z-index: 2000; /* Nad mapou, pod gaze-dot */
+    pointer-events: none; /* Nebude blokovat mapu */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Zobrazí se, když JS přidá třídu .active */
+#center-indicator.active {
+    opacity: 1;
+}
+
+#center-indicator svg {
+    /* Otočíme SVG, aby kruh začínal nahoře */
+    transform: rotate(-90deg);
+}
+
+.center-bg {
+    fill: rgba(0, 0, 0, 0.1);
+    stroke: rgba(255, 255, 255, 0.2);
+    stroke-width: 5px;
+}
+
+.center-progress {
+    fill: none;
+    stroke: rgba(59, 130, 246, 0.8); /* Modrá jako edge-highlight */
+    stroke-width: 5px;
+    
+    /* Obvod kruhu s r=35 je cca 220. Váš JS už s tímto číslem počítá. */
+    stroke-dasharray: 220;
+    
+    /* Začíná "prázdný". JS bude tuhle hodnotu měnit. */
+    stroke-dashoffset: 220; 
+}
