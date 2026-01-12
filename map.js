@@ -10,43 +10,33 @@ const CONFIG = {
 };
 
 // =========================================
-// INITIALIZE MAP
+// INITIALIZE MAP (MapLibre GL JS)
 // =========================================
-const map = L.map('map', {
-    zoomControl: false,
-    dragging: false,
-    scrollWheelZoom: false,
-    zoomControl: false,
-    dragging: false,
-    scrollWheelZoom: false,
-    doubleClickZoom: false,
-    touchZoom: false,
-    tap: false,
-    boxZoom: false
-}).setView([CONFIG.startLat, CONFIG.startLng], CONFIG.startZoom);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors'
-}).addTo(map);
+const map = new maplibregl.Map({
+    container: 'map',
+    style: 'https://tiles.versatiles.org/assets/styles/colorful/style.json', // or use your own style
+    center: [CONFIG.startLng, CONFIG.startLat],
+    zoom: CONFIG.startZoom,
+    interactive: false // Disable all default interactions
+});
 
 // =========================================
 // STATE
 // =========================================
-let gazeX = 0.2, gazeY = 0.5;  //aby se nespustilo načítací kolečko uprostřed nebo něco jiného
+let gazeX = 0.2, gazeY = 0.5;
 let currentZone = null, zoneEnterTime = null, isMoving = false;
 
 // Zoom state
 let lookingAtCenter = false;
 let centerLookStartTime = null;
 let zoomMode = false;
-const ZOOM_CENTER_TIME = 1000;  // 1 second looking at center
-const ZOOM_CONFIRM_TIME = 500;   // 0.5 seconds looking up/down
+const ZOOM_CENTER_TIME = 1000;
+const ZOOM_CONFIRM_TIME = 500;
 
 // =========================================
 // DETECT ZONE
 // =========================================
 function getZone(x, y) {
-    
     if ((y < 0 && x < 0.2) || (y < 0.2 && x < 0)) return 'top-left';
     if ((y < 0 && x > 0.8) || (y < 0.2 && x > 1)) return 'top-right';
     if ((y > 0.8 && x < 0) || (y > 1 && x < 0.2)) return 'bottom-left';
@@ -99,86 +89,17 @@ function getMovement(zone) {
     return moves[zone] || {x:0, y:0};
 }
 
-
-/* // =========================================
+// =========================================
 // ZOOM FUNCTION
 // =========================================
 function checkZoom(x, y) {
     const centerIndicator = document.getElementById('center-indicator');
     const progressCircle = document.querySelector('.center-progress');
     
-    // Define center area (40% - 60% on both axes)
     const inCenterX = x >= 0.4 && x <= 0.6;
     const inCenterY = y >= 0.4 && y <= 0.6;
     const inCenter = inCenterX && inCenterY;
     
-    // Define upper area
-    const inUpperArea = x > 0.2 && x < 0.8 && y > 0.4 && y < 0.4;
-    
-    // Define lower area
-    const inLowerArea = x > 0.2 && x < 0.8 && y > 0.6 && y < 0.6;
-    
-    // Step 1: Looking at center
-    if (inCenter && !zoomMode) {
-        if (!lookingAtCenter) {
-            lookingAtCenter = true;
-            centerLookStartTime = Date.now();
-            centerIndicator.classList.add('active');
-            console.log('👁️ Looking at center... (hold for 1 second to activate zoom)');
-        } else {
-            const elapsed = Date.now() - centerLookStartTime;
-            const progress = Math.min(elapsed / ZOOM_CENTER_TIME, 1);
-            
-            // Update progress circle (220 is full circle circumference)
-            const offset = 220 - (progress * 220);
-            progressCircle.style.strokeDashoffset = offset;
-            
-            if (elapsed >= ZOOM_CENTER_TIME) {
-                zoomMode = true;
-                lookingAtCenter = false;
-                centerIndicator.classList.remove('active');
-                progressCircle.style.strokeDashoffset = 220; // Reset
-                console.log('✅ ZOOM MODE ACTIVATED! Look UP for zoom in, DOWN for zoom out');
-            }
-        }
-    } 
-    // Step 2: In zoom mode, check for up/down
-    else if (zoomMode) {
-        if (inUpperArea) {
-            console.log('🔍 ZOOM IN!');
-            map.zoomIn();
-            zoomMode = false;
-        } else if (inLowerArea) {
-            console.log('🔍 ZOOM OUT!');
-            map.zoomOut();
-            zoomMode = false;
-        } else if (!inCenter && !inUpperArea && !inLowerArea) {
-            // Cancel if looking elsewhere
-            console.log('❌ Zoom cancelled');
-            zoomMode = false;
-        }
-    }
-    // Reset if not looking at center
-    else if (!inCenter) {
-        lookingAtCenter = false;
-        centerLookStartTime = null;
-        centerIndicator.classList.remove('active');
-        progressCircle.style.strokeDashoffset = 220; // Reset to empty
-    }
-}
- */
-// =========================================
-// ZOOM FUNCTION (OPRAVENO)
-// =========================================
-function checkZoom(x, y) {
-    const centerIndicator = document.getElementById('center-indicator');
-    const progressCircle = document.querySelector('.center-progress');
-    
-    const inCenterX = x >= 0.4 && x <= 0.6;
-    const inCenterY = y >= 0.4 && y <= 0.6;
-    const inCenter = inCenterX && inCenterY;
-    
-    // OPRAVA: Horní zóna je nad středem (y < 0.4), dolní pod ním (y > 0.6)
     const inUpperArea = x > 0.2 && x < 0.8 && y < 0.4;
     const inLowerArea = x > 0.2 && x < 0.8 && y > 0.6;
     
@@ -224,64 +145,39 @@ function checkZoom(x, y) {
 }
 
 // =========================================
-// MAIN LOOP (OPRAVENO S TRY-CATCH)
+// MAIN LOOP
 // =========================================
 function update() {
     try {
         const zone = getZone(gazeX, gazeY);
+        
         if (zone !== currentZone) {
             currentZone = zone;
             zoneEnterTime = zone ? Date.now() : null;
             isMoving = false;
             highlightEdge(null);
+            if (zone) console.log('📍 Entered zone:', zone);
         }
+        
         if (zone && zoneEnterTime) {
             const dwellTime = Date.now() - zoneEnterTime;
             if (dwellTime >= CONFIG.dwellTimeMs && !isMoving) {
                 isMoving = true;
+                console.log('🟢 Activating zone:', zone);
                 highlightEdge(zone);
             }
         }
+        
+        // Move map (MapLibre GL JS uses panBy differently)
         const move = getMovement(zone);
-        if (move.x || move.y) map.panBy([move.x, move.y], {animate: false});
+        if (move.x || move.y) {
+            map.panBy([move.x, move.y], {animate: false});
+        }
+        
         checkZoom(gazeX, gazeY);
     } catch (e) {
-        // Ignorujeme chyby mapy při změně velikosti okna
+        // Ignore map errors during window resize
     }
-    requestAnimationFrame(update);
-}
-
-// =========================================
-// MAIN LOOP
-// =========================================
-function update() {
-    const zone = getZone(gazeX, gazeY);
-    
-    // Handle zone changes
-    if (zone !== currentZone) {
-        currentZone = zone;
-        zoneEnterTime = zone ? Date.now() : null;
-        isMoving = false;
-        highlightEdge(null);
-        if (zone) console.log('📍 Entered zone:', zone);
-    }
-    
-    // Dwell time check
-    if (zone && zoneEnterTime) {
-        const dwellTime = Date.now() - zoneEnterTime;
-        if (dwellTime >= CONFIG.dwellTimeMs && !isMoving) {
-            isMoving = true;
-            console.log('🟢 Activating zone:', zone);
-            highlightEdge(zone);
-        }
-    }
-    
-    // Move map
-    const move = getMovement(zone);
-    if (move.x || move.y) map.panBy([move.x, move.y], {animate: false});
-    
-    // Check zoom (new simple method)
-    checkZoom(gazeX, gazeY);
     
     requestAnimationFrame(update);
 }
@@ -337,7 +233,7 @@ function connectGazeDeck() {
         }
         
         if (messageCount % 100 === 0) {
-            console.log(`✓ ${messageCount} messages received | Latest: x=${x.toFixed(3)}, y=${y.toFixed(3)}`);
+            console.log(`✔ ${messageCount} messages received | Latest: x=${x.toFixed(3)}, y=${y.toFixed(3)}`);
         }
         
         if (!isNaN(x) && !isNaN(y)) {
@@ -363,14 +259,17 @@ function connectGazeDeck() {
 }
 
 // =========================================
-// INIT (ONLY ONCE!)
+// INIT
 // =========================================
-console.log('👓 EYE-TRACKING MODE');
+console.log('👁️ EYE-TRACKING MODE');
 console.log('💡 Look OUTSIDE screen to move map');
-connectGazeDeck();
 
-
-console.log('✅ Map ready');
-console.log('📍 Dwell time: 500ms');
-console.log('🔍 Zoom: Look at CENTER (1s) → then UP/DOWN');
-update();
+// Wait for map to load before starting
+map.on('load', () => {
+    console.log('✅ Map ready');
+    console.log('🕐 Dwell time: 500ms');
+    console.log('🔍 Zoom: Look at CENTER (1s) → then UP/DOWN');
+    
+    connectGazeDeck();
+    update();
+});

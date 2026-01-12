@@ -1,3 +1,6 @@
+
+UPRAVIT KU DVOJCE!!!
+
 # Eye-tracking Map Control
 
 This project is part of a diploma thesis titled **"Development and testing of gaze controlled map interface"** developed at the **[Department of geoinformatics](https://www.geoinformatics.upol.cz/), Palacký University, Olomouc**.
