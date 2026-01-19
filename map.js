@@ -272,12 +272,13 @@ function connectGazeDeck() {
 console.log('👁️ EYE-TRACKING MODE');
 console.log('💡 Look OUTSIDE screen to move map');
 
-map.on('load', () => {
+map.on('load', async () => {
     console.log('✅ Map ready');
     console.log('🕐 Dwell time: 500ms');
     console.log('🔍 Zoom: Look at CENTER (1s) → then UP/DOWN');
     
-    loadData(map);
+    await loadData(map);
+    initEyeLegend(map);
     
     map.addControl(
     new maplibregl.ScaleControl({

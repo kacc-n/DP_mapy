@@ -160,3 +160,82 @@ body.hide-tags .apriltag {
   left: 50%;
   transform: translateX(-50%);
 }
+
+/* =========================================
+   STYLY PRO LEGENDU (EYE-TRACKING)
+   ========================================= */
+
+/* 1. Hlavní kontejner - umístění */
+#eye-legend-container {
+    position: absolute;
+    left: 2%;               /* Odsazení od levého okraje */
+    top: 50%;               /* Svisle na střed */
+    transform: translateY(-50%); /* Přesné vycentrování */
+    width: 220px;           /* Pevná šířka, akorát pro text */
+    z-index: 9999;          /* Musí být NAD mapou (mapa má obvykle 1) */
+    display: flex;
+    flex-direction: column;
+    gap: 8px;               /* Mezery mezi dlaždicemi */
+    transition: opacity 0.3s ease;
+}
+
+/* Třída pro schování legendy (přepíná se mezerníkem) */
+.hidden {
+    display: none !important;
+}
+
+/* 2. Vzhled jedné dlaždice */
+.legend-tile {
+    background: rgba(30, 30, 30, 0.95); /* Tmavě šedá, skoro neprůhledná */
+    color: white;
+    padding: 8px 12px;      /* Kompaktní vnitřní odsazení */
+    border-radius: 8px;     /* Zaoblené rohy */
+    display: flex;
+    align-items: center;    /* Zarovnání symbolu a textu na střed */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;        /* Čitelná velikost písma */
+    border: 3px solid transparent; /* Příprava pro zvýraznění */
+    cursor: pointer;        /* Aby šlo poznat, že je to klikací */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3); /* Jemný stín pod tlačítkem */
+    transition: all 0.2s ease;
+}
+
+/* Aktivní stav - když je vrstva vybraná */
+.legend-tile.active {
+    border-color: #00ff00;  /* Svítivě zelený rámeček */
+    background: rgba(60, 60, 60, 1);
+    transform: scale(1.05); /* Jemné zvětšení */
+}
+
+/* 3. Styly pro symboly (kolečka, čáry) */
+.symbol-container {
+    width: 30px;            /* Fixní šířka pro symbol */
+    margin-right: 10px;     /* Mezera mezi symbolem a textem */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.legend-symbol {
+    width: 24px;
+}
+
+/* Čtvereček (budovy, parky) */
+.symbol-fill {
+    height: 18px;
+    border-radius: 3px;
+    /* Border se nastavuje dynamicky v JS */
+}
+
+/* Čára (silnice) */
+.symbol-line {
+    width: 100%;
+    /* Výška a barva se nastavuje v JS */
+}
+
+/* Kolečko (body) */
+.symbol-circle {
+    height: 24px;
+    border-radius: 50%;
+    /* Border se nastavuje v JS */
+}
