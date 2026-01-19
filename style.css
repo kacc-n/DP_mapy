@@ -155,3 +155,8 @@ body.hide-tags .apriltag {
     /* Začíná "prázdný". JS bude tuhle hodnotu měnit. */
     stroke-dashoffset: 220; 
 }
+
+.maplibregl-ctrl-bottom-left {
+  left: 50%;
+  transform: translateX(-50%);
+}

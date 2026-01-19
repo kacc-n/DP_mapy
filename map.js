@@ -20,79 +20,13 @@ const map = new maplibregl.Map({
     interactive: false // Disable all default interactions
 });
 
-// =========================================
-// GEOJSON FILES LIST
-// =========================================
-const geojsonFiles = [
-    'amenity_cafe_Olomouc.json',
-    'amenity_restaurant_Olomouc.json',
-     'amenity_parking_Olomouc.json',
-    'building_Olomouc.json',
-    'highway_cycleway_Olomouc.json',
-    'highway_pedestrian_Olomouc.json',
-    'leisure_park_Olomouc.json',
-];
+/* const scale = new maplibregl.ScaleControl({
+  maxWidth: 100,
+  unit: 'metric' // 'metric', 'imperial', or 'nautical'
+});
 
-// =========================================
-// SMART LAYER FUNCTION
-// =========================================
-function addSmartLayer(id, data) {
-    const geomType = data.features[0]?.geometry?.type || 'Point';
-
-    if (geomType.includes('Polygon')) {
-        map.addLayer({
-            'id': id,
-            'type': 'fill',
-            'source': id,
-            'minzoom': 0,
-            'maxzoom': 24,
-            'paint': {
-                'fill-color': '#0080ff',
-                'fill-opacity': 0.7,
-            }
-        });
-        // Add outline as separate layer on top
-        map.addLayer({
-            'id': id + '-outline',
-            'type': 'line',
-            'source': id,
-            'minzoom': 0,
-            'maxzoom': 24,
-            'paint': {
-                'line-color': '#000',
-                'line-width': 2
-            }
-        });
-    } else if (geomType.includes('Line')) {
-        map.addLayer({
-            'id': id,
-            'type': 'line',
-            'source': id,
-            'minzoom': 0,
-            'maxzoom': 24,
-            'paint': {
-                'line-color': '#ff4d4d',
-                'line-width': 4
-            }
-        });
-    } else {
-        map.addLayer({
-            'id': id,
-            'type': 'circle',
-            'source': id,
-            'minzoom': 0,
-            'maxzoom': 24,
-            'paint': {
-                'circle-radius': 8,
-                'circle-color': '#ffcc00',
-                'circle-stroke-width': 2,
-                'circle-stroke-color': '#fff'
-            }
-        });
-    }
-    
-    console.log(`🎨 Added layer: ${id} (type: ${geomType})`);
-}
+map.addControl(scale, 'bottom-left');
+ */
 
 // =========================================
 // STATE
@@ -343,32 +277,16 @@ map.on('load', () => {
     console.log('🕐 Dwell time: 500ms');
     console.log('🔍 Zoom: Look at CENTER (1s) → then UP/DOWN');
     
-    // LOAD GEOJSON FILES
-    console.log('📂 Loading GeoJSON files...');
-    geojsonFiles.forEach(file => {
-        const filepath = `data/${file}`;
-        const layerId = file.replace('.geojson', '');
-
-        fetch(filepath)
-            .then(res => {
-                if (!res.ok) throw new Error(`Failed to load ${file}`);
-                return res.json();
-            })
-            .then(data => {
-                // Add source
-                map.addSource(layerId, {
-                    type: 'geojson',
-                    data: data
-                });
-
-                // Add layer with smart styling
-                addSmartLayer(layerId, data);
-                
-                console.log(`✅ Loaded: ${file} (${data.features.length} features)`);
-            })
-            .catch(err => console.error(`❌ Error loading ${file}:`, err));
-    });
+    loadData(map);
     
+    map.addControl(
+    new maplibregl.ScaleControl({
+      maxWidth: 100,
+      unit: 'metric'
+    }),
+    'bottom-left'
+  );
+
     // START EYE TRACKING
     connectGazeDeck();
     update();
