@@ -41,6 +41,13 @@ let zoomMode = false;
 const ZOOM_CENTER_TIME = 1000;
 const ZOOM_CONFIRM_TIME = 500;
 
+// --- NOVÉ: PRO LEGENDU ---
+let hoveredTileId = null;       // Na co se dívám
+let dwellStartTime = 0;         // Kdy jsem začal
+let interactionLocked = false;  // Zámek interakce
+const DWELL_TRIGGER_TIME = 1000; // 1 sekunda na aktivaci
+const DISPLAY_DURATION = 3000;  // 3 sekundy svítí
+
 // =========================================
 // DETECT ZONE
 // =========================================
@@ -157,6 +164,7 @@ function checkZoom(x, y) {
 // =========================================
 function update() {
     try {
+        // 1. Zjistíme zóny pro pohyb mapy (jako dřív)
         const zone = getZone(gazeX, gazeY);
         
         if (zone !== currentZone) {
@@ -182,9 +190,73 @@ function update() {
             map.panBy([move.x, move.y], {animate: false});
         }
         
+        // Zoom logic
         checkZoom(gazeX, gazeY);
+
+        // ====================================================
+        // NOVÁ LOGIKA: OVLÁDÁNÍ LEGENDY OČIMA
+        // ====================================================
+        const legendContainer = document.getElementById('eye-legend-container');
+        
+        // Kontrola: Legenda musí být vidět a nesmí běžet "zámek"
+        if (legendContainer && !legendContainer.classList.contains('hidden') && !interactionLocked) {
+            
+            // Přepočet na pixely
+            const screenX = gazeX * window.innerWidth;
+            const screenY = gazeY * window.innerHeight;
+            
+            let foundHover = false;
+
+            // Projdeme všechny dlaždice (myLayers je z layers.js)
+            myLayers.forEach(layer => {
+                const id = layer.file.replace('.json', '');
+                const tile = document.getElementById(`tile-${id}`);
+                
+                // Hledáme ten barevný proužek uvnitř dlaždice
+                // POZOR: Musíš ho mít v HTML (z layers.js)
+                const bar = tile ? tile.querySelector('.dwell-bar') : null;
+
+                if (tile && bar) {
+                    const rect = tile.getBoundingClientRect();
+
+                    // KOLIZE: Dívám se dovnitř dlaždice?
+                    if (screenX >= rect.left && screenX <= rect.right && 
+                        screenY >= rect.top && screenY <= rect.bottom) {
+                        
+                        foundHover = true;
+
+                        // A) Právě jsme se na ni podívali
+                        if (hoveredTileId !== id) {
+                            hoveredTileId = id;
+                            dwellStartTime = Date.now();
+                            // Vynulujeme ostatní
+                            document.querySelectorAll('.dwell-bar').forEach(b => b.style.width = '0%');
+                        }
+
+                        // B) Už se díváme -> plníme bar
+                        const elapsedTime = Date.now() - dwellStartTime;
+                        const progress = Math.min((elapsedTime / DWELL_TRIGGER_TIME) * 100, 100);
+                        bar.style.width = `${progress}%`;
+
+                        // C) Uplynula 1 sekunda -> SPUSTIT!
+                        if (elapsedTime >= DWELL_TRIGGER_TIME) {
+                            activateLayerBriefly(id, tile, bar);
+                        }
+
+                    } else {
+                        // Nedívám se sem -> reset
+                        bar.style.width = '0%';
+                    }
+                }
+            });
+
+            if (!foundHover) {
+                hoveredTileId = null;
+            }
+        }
+
     } catch (e) {
-        // Ignore map errors during window resize
+        // Ignore map errors
     }
     
     requestAnimationFrame(update);
@@ -264,6 +336,38 @@ function connectGazeDeck() {
         messageCount = 0;
         setTimeout(connectGazeDeck, 2000);
     };
+}
+
+// =========================================
+// FUNKCE PRO AKTIVACI VRSTVY OČIMA
+// =========================================
+function activateLayerBriefly(layerId, tileElement, barElement) {
+    console.log(`👁️ Aktivováno pohledem: ${layerId}`);
+    
+    // 1. Zamkneme interakci
+    interactionLocked = true;
+    
+    // 2. Vizuální potvrzení
+    tileElement.classList.add('locked'); // Zežloutne (dle CSS)
+    barElement.style.width = '100%';
+
+    // 3. Zavoláme funkci z layers.js
+    toggleLayerHighlight(layerId, map);
+
+    // 4. Odpočet 3 sekund
+    setTimeout(() => {
+        // Vypneme highlight
+        toggleLayerHighlight(layerId, map);
+        
+        // Reset vizuálu
+        tileElement.classList.remove('locked');
+        barElement.style.width = '0%';
+        
+        // Odemkneme
+        interactionLocked = false;
+        hoveredTileId = null;
+        
+    }, DISPLAY_DURATION);
 }
 
 // =========================================

@@ -2,7 +2,7 @@
 // 1. KONFIGURACE DAT (KUCHAŘKA)
 // ==========================================
 const myLayers = [
-  { file: 'building_Olomouc.json', color: '#524f4f', typ: 'fill', legend: 'Budovy' },
+  { file: 'building_Olomouc.json', color: '#a19d9d', typ: 'fill', legend: 'Budovy' },
   { file: 'leisure_park_Olomouc.json', color: '#9be692e0', typ: 'fill', legend: 'Parky' },
   { file: 'highway_pedestrian_Olomouc.json', color: '#876767', typ: 'line', legend: 'Pěší zóny' },
   { file: 'highway_cycleway_Olomouc.json', color: '#fa78ef', typ: 'line', legend: 'Cyklostezky' },
@@ -28,36 +28,47 @@ async function loadData(map) {
 
       map.addSource(id, { type: 'geojson', data: data });
 
-      // Stylujeme vrstvy v mapě tak, aby odpovídaly legendě
+      // --- ZMĚNA: Vytvoříme společné nastavení pro všechny vrstvy ---
+      const layerConfig = {
+          'id': id,
+          'source': id,
+          'minzoom': 14 // <--- TADY SE TO NASTAVUJE (data se ukáží až od zoomu 14)
+      };
+
+      // Nyní toto nastavení vložíme do každého typu pomocí "...layerConfig"
+      
       if (layer.typ === 'fill') {
         map.addLayer({
-          'id': id, 'type': 'fill', 'source': id,
+          ...layerConfig, // Vloží id, source a minzoom
+          'type': 'fill',
           'paint': { 
               'fill-color': layer.color, 
               'fill-opacity': 0.6,
-              'fill-outline-color': '#444' // Tmavý obrys budov
+              'fill-outline-color': '#444'
           }
         });
       } else if (layer.typ === 'line') {
         map.addLayer({
-          'id': id, 'type': 'line', 'source': id,
+          ...layerConfig, // Vloží id, source a minzoom
+          'type': 'line',
           'paint': { 
               'line-color': layer.color, 
-              'line-width': 4 // Tlustší čáry
+              'line-width': 2
           }
         });
       } else if (layer.typ === 'circle') {
         map.addLayer({
-          'id': id, 'type': 'circle', 'source': id,
+          ...layerConfig, // Vloží id, source a minzoom
+          'type': 'circle',
           'paint': { 
-              'circle-radius': 6, 
+              'circle-radius': 5, 
               'circle-color': layer.color,
-              'circle-stroke-width': 2, // Bílý obrys bodů
+              'circle-stroke-width': 1,
               'circle-stroke-color': '#fff'
           }
         });
       }
-      console.log(`✅ Data načtena: ${layer.legend}`);
+      console.log(`✅ Data načtena (zoom 14+): ${layer.legend}`);
 
     } catch (err) {
       console.error(`❌ Chyba u ${layer.file}:`, err);
@@ -106,10 +117,8 @@ function initEyeLegend(map) {
         tile.innerHTML = `
             <div class="symbol-container">${symbolHtml}</div>
             <span>${layer.legend}</span>
+            <div class="dwell-bar" id="bar-${id}"></div>
         `;
-
-        // Kliknutí myší (pro testování)
-        tile.onclick = () => toggleLayerHighlight(id, map);
         
         list.appendChild(tile);
     });

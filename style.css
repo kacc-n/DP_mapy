@@ -175,7 +175,6 @@ body.hide-tags .apriltag {
     z-index: 9999;          /* Musí být NAD mapou (mapa má obvykle 1) */
     display: flex;
     flex-direction: column;
-    gap: 8px;               /* Mezery mezi dlaždicemi */
     transition: opacity 0.3s ease;
 }
 
@@ -188,16 +187,18 @@ body.hide-tags .apriltag {
 .legend-tile {
     background: rgba(30, 30, 30, 0.95); /* Tmavě šedá, skoro neprůhledná */
     color: white;
-    padding: 8px 12px;      /* Kompaktní vnitřní odsazení */
+    padding: 15px 20px;      /* Kompaktní vnitřní odsazení */
     border-radius: 8px;     /* Zaoblené rohy */
     display: flex;
     align-items: center;    /* Zarovnání symbolu a textu na střed */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 14px;        /* Čitelná velikost písma */
     border: 3px solid transparent; /* Příprava pro zvýraznění */
-    cursor: pointer;        /* Aby šlo poznat, že je to klikací */
     box-shadow: 0 4px 6px rgba(0,0,0,0.3); /* Jemný stín pod tlačítkem */
     transition: all 0.2s ease;
+    margin-bottom: 12px;   /* Mezera mezi dlaždicemi */
+    position: relative;   /* Pro umístění dwell baru */
+    overflow: hidden;    /* Pro správné oříznutí dwell baru */
 }
 
 /* Aktivní stav - když je vrstva vybraná */
@@ -238,4 +239,22 @@ body.hide-tags .apriltag {
     height: 24px;
     border-radius: 50%;
     /* Border se nastavuje v JS */
+}
+
+/* Progress bar uvnitř dlaždice (Dwell Time indikátor) */
+.dwell-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 6px;           /* Výška proužku */
+    background-color: #00ff00; /* Zelená barva */
+    width: 0%;             /* Na začátku je prázdný */
+    transition: width 0.1s linear; /* Plynulý pohyb */
+    border-radius: 0 0 8px 8px;
+}
+
+/* Když je dlaždice aktivní (běží ty 3 sekundy) */
+.legend-tile.locked {
+    border-color: #ffd700; /* Zlatá barva pro aktivní stav */
+    background: rgba(80, 80, 80, 1);
 }
