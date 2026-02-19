@@ -23,7 +23,7 @@ async function loadData(map) {
     const id = layer.file.replace('.json', '');
 
     try {
-      const res = await fetch(`data/${layer.file}`);
+      const res = await fetch(`../../data/${layer.file}`);
       const data = await res.json();
 
       map.addSource(id, { type: 'geojson', data: data });
@@ -119,6 +119,7 @@ function initEyeLegend(map) {
             <span>${layer.legend}</span>
             <div class="dwell-bar" id="bar-${id}"></div>
         `;
+        tile.onclick = () => toggleLayerHighlight(id, map);
         
         list.appendChild(tile);
     });

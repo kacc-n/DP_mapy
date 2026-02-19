@@ -168,10 +168,10 @@ body.hide-tags .apriltag {
 /* 1. Hlavní kontejner - umístění */
 #eye-legend-container {
     position: absolute;
-    left: 2%;               /* Odsazení od levého okraje */
+    left: 6%;               /* Odsazení od levého okraje */
     top: 50%;               /* Svisle na střed */
     transform: translateY(-50%); /* Přesné vycentrování */
-    width: 220px;           /* Pevná šířka, akorát pro text */
+    width: 200px;           /* Pevná šířka, akorát pro text */
     z-index: 9999;          /* Musí být NAD mapou (mapa má obvykle 1) */
     display: flex;
     flex-direction: column;
@@ -187,7 +187,7 @@ body.hide-tags .apriltag {
 .legend-tile {
     background: rgba(30, 30, 30, 0.95); /* Tmavě šedá, skoro neprůhledná */
     color: white;
-    padding: 15px 20px;      /* Kompaktní vnitřní odsazení */
+    padding: 20px 20px;      /* Kompaktní vnitřní odsazení */
     border-radius: 8px;     /* Zaoblené rohy */
     display: flex;
     align-items: center;    /* Zarovnání symbolu a textu na střed */

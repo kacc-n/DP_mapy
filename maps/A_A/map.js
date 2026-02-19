@@ -20,18 +20,11 @@ const map = new maplibregl.Map({
     interactive: false // Disable all default interactions
 });
 
-/* const scale = new maplibregl.ScaleControl({
-  maxWidth: 100,
-  unit: 'metric' // 'metric', 'imperial', or 'nautical'
-});
-
-map.addControl(scale, 'bottom-left');
- */
 
 // =========================================
 // STATE
 // =========================================
-let gazeX = 0.2, gazeY = 0.5;
+let gazeX = 0.8, gazeY = 0.5;
 let currentZone = null, zoneEnterTime = null, isMoving = false;
 
 // Zoom state

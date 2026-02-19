@@ -3,7 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Starting to load tags...');
 
-    fetch('my_screen/surface_layout.yaml') 
+    fetch('../../my_screen/surface_layout.yaml') 
         .then(response => {
             if (!response.ok) throw new Error('Failed to fetch YAML');
             return response.text();
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Image
                 const img = document.createElement('img');
-                img.src = `my_screen/tag_${tagId}.png`; 
+                img.src = `../../my_screen/tag_${tagId}.png`; 
                 img.style.width = '100%';
                 img.style.height = '100%';
                 img.style.objectFit = 'contain';

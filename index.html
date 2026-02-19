@@ -1,52 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eye-Tracking Map Control</title>
-    
-    <!-- MapLibre GL JS CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
-    
-    <!-- Your custom styles -->
-    <link rel="stylesheet" href="style.css" />
+    <title>Testování Map</title>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+        iframe { width: 100%; height: 100%; border: none; }
+    </style>
 </head>
 <body>
-    <!-- The map will fill the whole screen -->
-    <div id="map"></div>
 
-    <!-- Visual dot to show where you're looking -->
-    <div id="gaze-dot"></div>
+    <iframe id="viewer" src="maps/A_A/index.html"></iframe>
 
-    <!-- Center indicator for zoom activation -->
-    <div id="center-indicator">
-        <svg width="80" height="80">
-            <circle cx="40" cy="40" r="35" class="center-bg"></circle>
-            <circle cx="40" cy="40" r="35" class="center-progress"></circle>
-        </svg>
-    </div>
-   
-    <!-- Legend -->
-    <div id="eye-legend-container" class="hidden">
-        <div id="eye-legend-list"></div>
-    </div>
+    <script>
+        // Cesty k vašim jednotlivým HTML souborům
+        const pages = [
+            'maps/A_A/index.html',
+            'maps/A_P/index.html',
+            'maps/P_A/index.html',
+            'maps/P_P/index.html'
+        ];
+        
+        let current = 0;
+        const iframe = document.getElementById('viewer');
 
-    <!-- AprilTags will be dynamically loaded here -->
-    <div id="apriltags-container"></div>
-
-    <!-- MapLibre GL JS library -->
-    <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-    
-    <!-- YAML parser library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
-    
-    <!-- Load AprilTags script -->
-    <script src="tagsloader.js"></script>
-
-    <script src="layers.js"></script>
-
-    <!-- Your map control script -->
-    <script src="map.js"></script>
-
+        document.addEventListener('keydown', (e) => {
+            // Šipka vpravo nebo Mezerník přepne na další
+            if (e.key === 'ArrowRight' || e.code === 'Space') {
+                if (current < pages.length - 1) {
+                    current++;
+                    iframe.src = pages[current];
+                }
+            }
+            // Šipka vlevo vrátí zpět
+            else if (e.key === 'ArrowLeft') {
+                if (current > 0) {
+                    current--;
+                    iframe.src = pages[current];
+                }
+            }
+        });
+    </script>
 </body>
 </html>
