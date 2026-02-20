@@ -12,7 +12,6 @@ const myLayers = [
 ];
 
 // Proměnné pro stav legendy
-let legendActive = false;
 let currentHighlightId = null;
 
 // ==========================================
@@ -123,13 +122,6 @@ function initEyeLegend(map) {
         list.appendChild(tile);
     });
 
-    // Ovládání mezerníkem
-    window.addEventListener('keydown', (e) => {
-        if (e.code === 'Space') {
-            legendActive = !legendActive;
-            container.classList.toggle('hidden', !legendActive);
-        }
-    });
 }
 
 // ==========================================

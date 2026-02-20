@@ -153,14 +153,16 @@ body.hide-tags .apriltag {
 
 /* 1. Hlavní kontejner - umístění */
 #eye-legend-container {
-    position: absolute;
-    left: 6%;               /* Odsazení od levého okraje */
-    top: 50%;               /* Svisle na střed */
-    transform: translateY(-50%); /* Přesné vycentrování */
-    width: 200px;           /* Pevná šířka, akorát pro text */
-    z-index: 9999;          /* Musí být NAD mapou (mapa má obvykle 1) */
+    position: fixed; /* Změna na fixed pro jistotu */
+    left: 6%;       /* Přidáme levý okraj */
+    right: 6%;      /* Přidáme pravý okraj */
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 9999;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;        /* Sloupce vedle sebe */
+    justify-content: space-between; /* Jeden vlevo, druhý vpravo */
+    pointer-events: none;       /* Aby kontejner neblokoval mapu uprostřed */
     transition: opacity 0.3s ease;
 }
 
@@ -182,7 +184,7 @@ body.hide-tags .apriltag {
     border: 3px solid transparent; /* Příprava pro zvýraznění */
     box-shadow: 0 4px 6px rgba(0,0,0,0.3); /* Jemný stín pod tlačítkem */
     transition: all 0.2s ease;
-    margin-bottom: 12px;   /* Mezera mezi dlaždicemi */
+    margin-bottom: 10px;   /* Mezera mezi dlaždicemi */
     position: relative;   /* Pro umístění dwell baru */
     overflow: hidden;    /* Pro správné oříznutí dwell baru */
 }
@@ -192,6 +194,14 @@ body.hide-tags .apriltag {
     border-color: #00ff00;  /* Svítivě zelený rámeček */
     background: rgba(60, 60, 60, 1);
     transform: scale(1.05); /* Jemné zvětšení */
+}
+
+/* Vytvoříme dva vnitřní kontejnery pro sloupce */
+.legend-column {
+    display: flex;
+    flex-direction: column;
+    width: 200px;               /* Původní šířka tlačítek */
+    pointer-events: auto;       /* Tlačítka musí být klikatelná/interaktivní */
 }
 
 /* 3. Styly pro symboly (kolečka, čáry) */
@@ -207,7 +217,7 @@ body.hide-tags .apriltag {
     width: 24px;
 }
 
-/* Čtvereček (budovy, parky) */
+ /* Čtvereček (budovy, parky) */
 .symbol-fill {
     height: 18px;
     border-radius: 3px;
@@ -219,6 +229,7 @@ body.hide-tags .apriltag {
     width: 100%;
     /* Výška a barva se nastavuje v JS */
 }
+
 
 /* Kolečko (body) */
 .symbol-circle {
@@ -239,7 +250,7 @@ body.hide-tags .apriltag {
     border-radius: 0 0 8px 8px;
 }
 
-/* Když je dlaždice aktivní (běží ty 3 sekundy) */
+/* Když je dlaždice aktivní */
 .legend-tile.locked {
     border-color: #ffd700; /* Zlatá barva pro aktivní stav */
     background: rgba(80, 80, 80, 1);

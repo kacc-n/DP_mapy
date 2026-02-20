@@ -17,7 +17,7 @@ const map = new maplibregl.Map({
     style: 'https://tiles.versatiles.org/assets/styles/colorful/style.json',
     center: [CONFIG.startLng, CONFIG.startLat],
     zoom: CONFIG.startZoom,
-    interactive: true // Disable all default interactions
+    interactive: false // Disable all default interactions
 });
 
 
@@ -39,7 +39,6 @@ let hoveredTileId = null;       // Na co se dívám
 let dwellStartTime = 0;         // Kdy jsem začal
 let interactionLocked = false;  // Zámek interakce
 const DWELL_TRIGGER_TIME = 1000; // 1 sekunda na aktivaci
-const DISPLAY_DURATION = 3000;  // 3 sekundy svítí
 
 // =========================================
 // DETECT ZONE
@@ -152,7 +151,7 @@ function checkZoom(x, y) {
     }
 }
 
-/* // =========================================
+// =========================================
 // MAIN LOOP
 // =========================================
 function update() {
@@ -192,7 +191,7 @@ function update() {
         const legendContainer = document.getElementById('eye-legend-container');
         
         // Kontrola: Legenda musí být vidět a nesmí běžet "zámek"
-        if (legendContainer && !legendContainer.classList.contains('hidden') && !interactionLocked) {
+        if (legendContainer && !interactionLocked) {
             
             // Přepočet na pixely
             const screenX = gazeX * window.innerWidth;
@@ -233,7 +232,7 @@ function update() {
 
                         // C) Uplynula 1 sekunda -> SPUSTIT!
                         if (elapsedTime >= DWELL_TRIGGER_TIME) {
-                            activateLayerBriefly(id, tile, bar);
+                            handleLayerToggle(id, tile, bar);
                         }
 
                     } else {
@@ -255,7 +254,7 @@ function update() {
     requestAnimationFrame(update);
 }
 
- */// =========================================
+// =========================================
 // GAZE UPDATE
 // =========================================
 function updateGaze(x, y) {
@@ -334,33 +333,25 @@ function connectGazeDeck() {
 // =========================================
 // FUNKCE PRO AKTIVACI VRSTVY OČIMA
 // =========================================
-function activateLayerBriefly(layerId, tileElement, barElement) {
-    console.log(`👁️ Aktivováno pohledem: ${layerId}`);
+function handleLayerToggle(layerId, tileElement, barElement) {
+    console.log(`👁️ Přepínám vrstvu pohledem: ${layerId}`);
     
-    // 1. Zamkneme interakci
-    interactionLocked = true;
-    
-    // 2. Vizuální potvrzení
-    tileElement.classList.add('locked'); // Zežloutne (dle CSS)
-    barElement.style.width = '100%';
-
-    // 3. Zavoláme funkci z layers.js
+    // 1. Zavoláme funkci z layers.js (ta už v sobě má logiku přepínání ON/OFF)
     toggleLayerHighlight(layerId, map);
 
-    // 4. Odpočet 3 sekund
+    // 2. Vizuální zpětná vazba - krátké "bliknutí" pro potvrzení aktivace
+    tileElement.classList.add('locked');
+    barElement.style.width = '0%';
+
+    // 3. Krátký zámek interakce (1 sekunda), aby se přepínač hned znovu neaktivoval, 
+    // pokud na dlaždici uživatel stále kouká.
+    interactionLocked = true;
+    
     setTimeout(() => {
-        // Vypneme highlight
-        toggleLayerHighlight(layerId, map);
-        
-        // Reset vizuálu
         tileElement.classList.remove('locked');
-        barElement.style.width = '0%';
-        
-        // Odemkneme
         interactionLocked = false;
-        hoveredTileId = null;
-        
-    }, DISPLAY_DURATION);
+        dwellStartTime = Date.now(); // Resetujeme čas pro případný další pokus
+    }, 1000); 
 }
 
 // =========================================
@@ -386,6 +377,6 @@ map.on('load', async () => {
   );
 
     // START EYE TRACKING
-/*     connectGazeDeck();
-    update(); */
+    connectGazeDeck();
+    update();
 });

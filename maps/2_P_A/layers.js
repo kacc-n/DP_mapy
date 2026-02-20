@@ -12,7 +12,6 @@ const myLayers = [
 ];
 
 // Proměnné pro stav legendy
-let legendActive = false;
 let currentHighlightId = null;
 
 // ==========================================
@@ -119,18 +118,10 @@ function initEyeLegend(map) {
             <span>${layer.legend}</span>
             <div class="dwell-bar" id="bar-${id}"></div>
         `;
-        tile.onclick = () => toggleLayerHighlight(id, map);
         
         list.appendChild(tile);
     });
 
-    // Ovládání mezerníkem
-    window.addEventListener('keydown', (e) => {
-        if (e.code === 'Space') {
-            legendActive = !legendActive;
-            container.classList.toggle('hidden', !legendActive);
-        }
-    });
 }
 
 // ==========================================
