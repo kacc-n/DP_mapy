@@ -56,11 +56,7 @@ async function loadData(map) {
       'minzoom': 10, // Sníženo, aby body byly vidět i při větším oddálení
       'paint': {
         'circle-color': colorExpression,
-        'circle-radius': [
-          'interpolate', ['linear'], ['zoom'],
-          10, 4,
-          16, 10
-        ],
+        'circle-radius': 7,
         'circle-stroke-width': 1.5,
         'circle-stroke-color': '#ffffff',
         'circle-opacity': 0.9
