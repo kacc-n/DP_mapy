@@ -4,7 +4,7 @@
 const CONFIG = {
     startLat: 49.593777,
     startLng: 17.250879,
-    startZoom: 16,
+    startZoom: 11,
     moveSpeed: 8,
     dwellTimeMs: 500,
 };
@@ -354,6 +354,25 @@ function handleLayerToggle(layerId, tileElement, barElement) {
         dwellStartTime = Date.now(); // Resetujeme čas pro případný další pokus
     }, 1000); 
 }
+
+// =========================================
+// FUNKCE "DOMEČEK" (NÁVRAT NA START)
+// =========================================
+    window.addEventListener('keydown', (e) => {
+        // Kontrola, zda byla stisknuta klávesa 'h' (malé i velké)
+        if (e.key.toLowerCase() === 'h') {
+            console.log('🏠 Navracení na startovní pozici...');
+            
+            map.flyTo({
+                center: [CONFIG.startLng, CONFIG.startLat], // Použije souřadnice z CONFIG
+                zoom: CONFIG.startZoom,                     // Použije zoom z CONFIG
+                essential: true,                             // Animace proběhne i při zapnutém šetření pohybem
+                speed: 1,                                  // Rychlost přeletu
+                curve: 1                                     // Styl prohnutí cesty přeletu
+            });
+        }
+    });
+
 
 // =========================================
 // INIT - SINGLE map.on('load') EVENT!
