@@ -4,7 +4,7 @@
 const CONFIG = {
     startLat: 49.593777,
     startLng: 17.250879,
-    startZoom: 16,
+    startZoom: 11,
     moveSpeed: 8,
     dwellTimeMs: 500,
 };
