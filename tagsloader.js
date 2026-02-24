@@ -1,97 +1,96 @@
-// tagsloader.js - snap to edges
+// ==========================================
+// TAGSLOADER.JS
+// Reads AprilTag positions from a YAML config file and places
+// them on screen as fixed HTML elements.
+// Tags snap to screen edges when they are within 5% of the border.
+// ==========================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Starting to load tags...');
+    console.log('📍 Loading AprilTags...');
 
-    fetch('../../my_screen/surface_layout.yaml') 
+    fetch('../../my_screen/surface_layout.yaml')
         .then(response => {
-            if (!response.ok) throw new Error('Failed to fetch YAML');
+            if (!response.ok) throw new Error('Failed to fetch surface_layout.yaml');
             return response.text();
         })
         .then(yamlText => {
             const data = jsyaml.load(yamlText);
-            
-            const yamlRefWidth = data.size[0];  // 1920
-            const yamlRefHeight = data.size[1]; // 1080
+
+            // Reference resolution the YAML coordinates are based on
+            const yamlRefWidth  = data.size[0]; // e.g. 1920
+            const yamlRefHeight = data.size[1]; // e.g. 1080
 
             const container = document.getElementById('apriltags-container');
-            container.innerHTML = ''; 
+            container.innerHTML = ''; // Clear any existing tags
 
-            //tolerance for snapping to edges
-            // 5 % for 25px space
-            const SNAP_THRESHOLD = 0.05; 
+            // Tags within 5% of a screen edge will snap flush to that edge
+            const SNAP_THRESHOLD = 0.05;
 
             for (const [tagId, tagData] of Object.entries(data.tags)) {
                 const corners = tagData.corners;
 
-                // Getting dimensions from YAML
-                const xs = corners.map(c => c[0]);
-                const ys = corners.map(c => c[1]);
-                
-                const minX = Math.min(...xs);
-                const minY = Math.min(...ys);
+                // Calculate bounding box from corner coordinates
+                const xs      = corners.map(c => c[0]);
+                const ys      = corners.map(c => c[1]);
+                const minX    = Math.min(...xs);
+                const minY    = Math.min(...ys);
                 const widthPx = Math.max(...xs) - minX;
-                const heightPx = Math.max(...ys) - minY; // Needed for bottom edge calculation
+                const heightPx = Math.max(...ys) - minY;
 
-                // Basic calculation in percentages (as before)
-                let leftPercent = (minX / yamlRefWidth) * 100;
-                let topPercent = (minY / yamlRefHeight) * 100;
+                // Convert position and size to percentages for responsive placement
+                const leftPercent  = (minX / yamlRefWidth)  * 100;
+                const topPercent   = (minY / yamlRefHeight) * 100;
                 const widthPercent = (widthPx / yamlRefWidth) * 100;
 
-                // Creating the element
+                // Create the tag container element
                 const tag = document.createElement('div');
-                tag.className = 'apriltag';
+                tag.className  = 'apriltag';
                 tag.dataset.id = tagId;
-                
                 tag.style.position = 'fixed';
-                tag.style.width = widthPercent.toFixed(4) + '%';
-                
-                // --- SNAP TO EDGES LOGIC ---
-                
-                // 1. Check LEFT edge
+                tag.style.width    = widthPercent.toFixed(4) + '%';
+
+                // --- EDGE SNAPPING ---
+                // Snap to left edge if tag starts within 5% of left border
                 if (minX / yamlRefWidth < SNAP_THRESHOLD) {
-                    tag.style.left = '0px'; // Snap to left edge
+                    tag.style.left = '0px';
                 } else {
                     tag.style.left = leftPercent.toFixed(4) + '%';
                 }
 
-                // 2. Check RIGHT edge  
-                // If it ends near the right edge (minX + width > 95% width)
+                // Snap to right edge if tag ends within 5% of right border
                 if ((minX + widthPx) / yamlRefWidth > (1 - SNAP_THRESHOLD)) {
-                    tag.style.left = 'auto';  // Remove left
-                    tag.style.right = '0px';  // Snap to right edge
+                    tag.style.left  = 'auto';
+                    tag.style.right = '0px';
                 }
 
-                // 3. Check TOP edge
+                // Snap to top edge if tag starts within 5% of top border
                 if (minY / yamlRefHeight < SNAP_THRESHOLD) {
                     tag.style.top = '0px';
                 } else {
                     tag.style.top = topPercent.toFixed(4) + '%';
                 }
 
-                // 4. Check BOTTOM edge
+                // Snap to bottom edge if tag ends within 5% of bottom border
                 if ((minY + heightPx) / yamlRefHeight > (1 - SNAP_THRESHOLD)) {
-                    tag.style.top = 'auto';
+                    tag.style.top    = 'auto';
                     tag.style.bottom = '0px';
                 }
 
-                // Image
+                // Create and attach the tag image
                 const img = document.createElement('img');
-                img.src = `../../my_screen/tag_${tagId}.png`; 
-                img.style.width = '100%';
-                img.style.height = '100%';
+                img.src            = `../../my_screen/tag_${tagId}.png`;
+                img.style.width    = '100%';
+                img.style.height   = '100%';
                 img.style.objectFit = 'contain';
-                
-                // Disable dragging with mouse
-                img.draggable = false;
+                img.draggable      = false; // Prevent accidental dragging
 
                 tag.appendChild(img);
                 container.appendChild(tag);
             }
-            
-            console.log(`Loaded ${Object.keys(data.tags).length} tags (Edge Snapping Active).`);
+
+            console.log(`✅ ${Object.keys(data.tags).length} AprilTags loaded (edge snapping active).`);
         })
         .catch(err => {
-            console.error('Error loading tags:', err);
+            console.error('❌ Error loading AprilTags:', err);
         });
 });
