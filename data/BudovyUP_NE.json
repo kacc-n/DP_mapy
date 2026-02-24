@@ -1,4 +1,7 @@
-{"type": "FeatureCollection","features": [
+{
+"type": "FeatureCollection",
+"name": "BudovyUP",
+"features": [
 { "type": "Feature", "properties": { "ID": 1, "nazevCZ": "Cyrilometodějská teologická fakulta – hlavní budova", "FAKULTA": "Teologická" }, "geometry": { "type": "Point", "coordinates": [ 17.254943609590715, 49.594718104204482 ] } },
 { "type": "Feature", "properties": { "ID": 2, "nazevCZ": "Cyrilometodějská teologická fakulta", "FAKULTA": "Teologická" }, "geometry": { "type": "Point", "coordinates": [ 17.254553273046668, 49.594363004824615 ] } },
 { "type": "Feature", "properties": { "ID": 4, "nazevCZ": "Lékařská fakulta – Ústav molekulární a translační medicíny", "FAKULTA": "Lékařská" }, "geometry": { "type": "Point", "coordinates": [ 17.235187209577401, 49.586075804202267 ] } },

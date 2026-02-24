@@ -1,4 +1,8 @@
-/* Remove all margins and make the page full screen */
+/* ==========================================
+   BASE LAYOUT
+   ========================================== */
+
+/* Remove all default spacing and prevent scrollbars */
 body {
     margin: 0;
     padding: 0;
@@ -6,12 +10,16 @@ body {
     font-family: Arial, sans-serif;
 }
 
-/* Map takes up the entire screen */
+/* Map fills the entire screen */
 #map {
     width: 100vw;
     height: 100vh;
 }
-/* Visual dot to show gaze position (for testing with mouse) */
+
+/* ==========================================
+   GAZE DOT
+   Red dot that follows the user's gaze position (useful for testing)
+   ========================================== */
 #gaze-dot {
     position: fixed;
     width: 16px;
@@ -26,7 +34,10 @@ body {
     box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
 }
 
-/* Edge highlight - clean and subtle */
+/* ==========================================
+   EDGE HIGHLIGHT
+   Subtle blue glow shown on the screen edge the user is looking at
+   ========================================== */
 .edge-highlight {
     position: fixed;
     background: rgba(59, 130, 246, 0.15);
@@ -41,10 +52,14 @@ body {
     to { opacity: 1; }
 }
 
-/* AprilTags - positioned in corners and edges of screen */
+/* ==========================================
+   APRILTAG MARKERS
+   Fiducial markers used for eye-tracker calibration,
+   positioned at screen corners and edges
+   ========================================== */
 .apriltag {
     position: fixed;
-    aspect-ratio: 1 / 1; 
+    aspect-ratio: 1 / 1;
     height: auto;
     display: flex;
     align-items: center;
@@ -54,73 +69,61 @@ body {
     pointer-events: none;
 }
 
+/* Prevent image selection */
 .apriltag img {
-    /* no selecting img */
     user-select: none;
     -webkit-user-select: none;
 }
 
-/* Fix for tags with transform in HTML (2, 5, 6, 9) */
+/* Tags with inline transforms need transition disabled to avoid conflict */
 .apriltag[data-id="2"],
 .apriltag[data-id="5"],
 .apriltag[data-id="6"],
 .apriltag[data-id="9"] {
-    transition: none; /* Remove transition for these */
+    transition: none;
 }
 
-/* Tag pop effect when looking at it */
+/* Scale up tag when user looks at it */
 .apriltag.tag-active {
     transform: scale(1.15) !important;
     z-index: 1600;
 }
 
-/* Special handling for tags with inline transform */
-.apriltag[data-id="2"].tag-active {
-    transform: translateX(-50%) scale(1.15) !important;
-}
+/* Tags 2, 5, 6, 9 have existing transforms - extend rather than replace */
+.apriltag[data-id="2"].tag-active { transform: translateX(-50%) scale(1.15) !important; }
+.apriltag[data-id="5"].tag-active { transform: translateY(-50%) scale(1.15) !important; }
+.apriltag[data-id="6"].tag-active { transform: translateY(-50%) scale(1.15) !important; }
+.apriltag[data-id="9"].tag-active { transform: translateX(-50%) scale(1.15) !important; }
 
-.apriltag[data-id="5"].tag-active {
-    transform: translateY(-50%) scale(1.15) !important;
-}
+/* Remove default pseudo-element content */
+.apriltag::before { content: ''; }
 
-.apriltag[data-id="6"].tag-active {
-    transform: translateY(-50%) scale(1.15) !important;
-}
+/* Add class 'hide-tags' to <body> to hide all tags after calibration */
+body.hide-tags .apriltag { display: none; }
 
-.apriltag[data-id="9"].tag-active {
-    transform: translateX(-50%) scale(1.15) !important;
-}
-
-/* Remove the text overlay since we're showing real images */
-.apriltag::before {
-    content: '';
-}
-
-/* You can hide tags after calibration by adding this class to body */
-body.hide-tags .apriltag {
-    display: none;
-}
-
-/* Center indicator for zoom activation */
+/* ==========================================
+   CENTER ZOOM INDICATOR
+   Circular progress ring shown when the user looks at the screen center.
+   Fills up over 1 second, then zoom mode activates.
+   ========================================== */
 #center-indicator {
     position: fixed;
     top: 50%;
     left: 50%;
-    /* 80x80 SVG, posuneme o polovinu zpět */
-    transform: translate(-40px, -40px);
-    z-index: 2000; /* Nad mapou, pod gaze-dot */
-    pointer-events: none; /* Nebude blokovat mapu */
+    transform: translate(-40px, -40px); /* Center the 80x80 SVG */
+    z-index: 2000;
+    pointer-events: none;
     opacity: 0;
     transition: opacity 0.3s ease;
 }
 
-/* Zobrazí se, když JS přidá třídu .active */
+/* Visible when JS adds the 'active' class */
 #center-indicator.active {
     opacity: 1;
 }
 
+/* Rotate so the progress ring starts from the top */
 #center-indicator svg {
-    /* Otočíme SVG, aby kruh začínal nahoře */
     transform: rotate(-90deg);
 }
 
@@ -132,82 +135,99 @@ body.hide-tags .apriltag {
 
 .center-progress {
     fill: none;
-    stroke: rgba(59, 130, 246, 0.8); /* Modrá jako edge-highlight */
+    stroke: rgba(59, 130, 246, 0.8);
     stroke-width: 5px;
-    
-    /* Obvod kruhu s r=35 je cca 220. Váš JS už s tímto číslem počítá. */
-    stroke-dasharray: 220;
-    
-    /* Začíná "prázdný". JS bude tuhle hodnotu měnit. */
-    stroke-dashoffset: 220; 
+    stroke-dasharray: 220;   /* Full circle circumference for r=35 */
+    stroke-dashoffset: 220;  /* Starts empty; JS animates this value */
 }
 
+/* ==========================================
+   SCALE BAR
+   Centers the MapLibre scale control at the bottom of the screen
+   ========================================== */
 .maplibregl-ctrl-bottom-left {
-  left: 50%;
-  transform: translateX(-50%);
+    left: 50%;
+    transform: translateX(-50%);
 }
 
-/* =========================================
-   STYLY PRO LEGENDU (EYE-TRACKING)
-   ========================================= */
-
-/* 1. Hlavní kontejner - umístění */
+/* ==========================================
+   LEGEND CONTAINER
+   Fixed to the left and right sides of the screen.
+   The two columns are positioned at screen edges so the
+   map remains visible and interactive in the center.
+   ========================================== */
 #eye-legend-container {
-    position: fixed; /* Změna na fixed pro jistotu */
-    left: 6%;       /* Přidáme levý okraj */
-    right: 6%;      /* Přidáme pravý okraj */
+    position: fixed;
+    left: 6%;
+    right: 6%;
     top: 50%;
     transform: translateY(-50%);
     z-index: 9999;
     display: flex;
-    flex-direction: row;        /* Sloupce vedle sebe */
-    justify-content: space-between; /* Jeden vlevo, druhý vpravo */
-    pointer-events: none;       /* Aby kontejner neblokoval mapu uprostřed */
+    flex-direction: row;
+    justify-content: space-between;
+    pointer-events: none; /* Container is transparent to clicks; columns below re-enable it */
     transition: opacity 0.3s ease;
 }
 
-/* Třída pro schování legendy (přepíná se mezerníkem) */
+/* Utility class to fully hide the legend (can be toggled via keyboard) */
 .hidden {
     display: none !important;
 }
 
-/* 2. Vzhled jedné dlaždice */
-.legend-tile {
-    background: rgba(30, 30, 30, 0.95); /* Tmavě šedá, skoro neprůhledná */
-    color: white;
-    height: 60px; /* Pevná výška */
-    padding: 0 20px; /* Padding už jen po stranách */    border-radius: 8px;     /* Zaoblené rohy */
-    display: flex;
-    align-items: center;    /* Zarovnání symbolu a textu na střed */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 14px;        /* Čitelná velikost písma */
-    border: 3px solid transparent; /* Příprava pro zvýraznění */
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3); /* Jemný stín pod tlačítkem */
-    transition: all 0.2s ease;
-    margin-bottom: 10px;   /* Mezera mezi dlaždicemi */
-    position: relative;   /* Pro umístění dwell baru */
-    overflow: hidden;    /* Pro správné oříznutí dwell baru */
-}
-
-/* Aktivní stav - když je vrstva vybraná */
-.legend-tile.active {
-    border-color: #00ff00;  /* Svítivě zelený rámeček */
-    background: rgba(60, 60, 60, 1);
-    transform: scale(1.05); /* Jemné zvětšení */
-}
-
-/* Vytvoříme dva vnitřní kontejnery pro sloupce */
+/* ==========================================
+   LEGEND COLUMNS
+   Each column holds a vertical stack of legend tiles
+   ========================================== */
 .legend-column {
     display: flex;
     flex-direction: column;
-    width: 200px;               /* Původní šířka tlačítek */
-    pointer-events: auto;       /* Tlačítka musí být klikatelná/interaktivní */
+    width: 200px;
+    pointer-events: auto; /* Re-enable pointer events for the tiles */
 }
 
-/* 3. Styly pro symboly (kolečka, čáry) */
+/* ==========================================
+   LEGEND TILES
+   Individual clickable/gaze-activated buttons in the legend
+   ========================================== */
+.legend-tile {
+    background: rgba(30, 30, 30, 0.95);
+    color: white;
+    height: 60px;
+    padding: 0 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    border: 3px solid transparent; /* Border color changes on active/locked states */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden; /* Needed so the dwell bar doesn't overflow rounded corners */
+}
+
+/* Active state: faculty is currently highlighted on the map */
+.legend-tile.active {
+    border-color: #00ff00;
+    background: rgba(60, 60, 60, 1);
+    transform: scale(1.05);
+}
+
+/* Locked state: briefly shown right after a gaze activation (gold flash) */
+.legend-tile.locked {
+    border-color: #ffd700;
+    background: rgba(80, 80, 80, 1);
+}
+
+/* ==========================================
+   LEGEND SYMBOLS
+   Small colored icon inside each tile (circle for this map)
+   ========================================== */
 .symbol-container {
-    width: 30px;            /* Fixní šířka pro symbol */
-    margin-right: 10px;     /* Mezera mezi symbolem a textem */
+    width: 30px;
+    margin-right: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -217,41 +237,35 @@ body.hide-tags .apriltag {
     width: 24px;
 }
 
- /* Čtvereček (budovy, parky) */
+/* Square symbol (used for fill layers like buildings or parks) */
 .symbol-fill {
     height: 18px;
     border-radius: 3px;
-    /* Border se nastavuje dynamicky v JS */
 }
 
-/* Čára (silnice) */
+/* Line symbol (used for road/path layers) */
 .symbol-line {
     width: 100%;
-    /* Výška a barva se nastavuje v JS */
 }
 
-
-/* Kolečko (body) */
+/* Circle symbol (used for point layers) */
 .symbol-circle {
     height: 24px;
     border-radius: 50%;
-    /* Border se nastavuje v JS */
 }
 
-/* Progress bar uvnitř dlaždice (Dwell Time indikátor) */
+/* ==========================================
+   DWELL BAR
+   Green progress bar at the bottom of each tile.
+   Fills up as the user looks at the tile, triggers at 100%.
+   ========================================== */
 .dwell-bar {
     position: absolute;
     bottom: 0;
     left: 0;
-    height: 6px;           /* Výška proužku */
-    background-color: #00ff00; /* Zelená barva */
-    width: 0%;             /* Na začátku je prázdný */
-    transition: width 0.1s linear; /* Plynulý pohyb */
+    height: 6px;
+    background-color: #00ff00;
+    width: 0%;
+    transition: width 0.1s linear;
     border-radius: 0 0 8px 8px;
-}
-
-/* Když je dlaždice aktivní */
-.legend-tile.locked {
-    border-color: #ffd700; /* Zlatá barva pro aktivní stav */
-    background: rgba(80, 80, 80, 1);
 }
