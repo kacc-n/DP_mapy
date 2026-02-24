@@ -4,48 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eye-Tracking Map Control</title>
-    
-    <!-- MapLibre GL JS CSS -->
+
+    <!-- MapLibre GL JS - library for interactive maps -->
     <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
-    
-    <!-- Your custom styles -->
+
+    <!-- Shared custom styles (two levels up, used by all maps) -->
     <link rel="stylesheet" href="../../style.css" />
 </head>
 <body>
-    <!-- The map will fill the whole screen -->
+
+    <!-- Full-screen map container -->
     <div id="map"></div>
 
-    <!-- Visual dot to show where you're looking -->
+    <!-- Red dot showing current gaze position -->
     <div id="gaze-dot"></div>
 
-    <!-- Center indicator for zoom activation -->
+    <!-- Circular progress indicator shown when looking at screen center (activates zoom mode) -->
     <div id="center-indicator">
         <svg width="80" height="80">
             <circle cx="40" cy="40" r="35" class="center-bg"></circle>
             <circle cx="40" cy="40" r="35" class="center-progress"></circle>
         </svg>
     </div>
-   
-    <!-- Legend -->
+
+    <!-- Eye-tracking legend - tiles are generated dynamically by layers.js -->
     <div id="eye-legend-container">
         <div id="eye-legend-list"></div>
     </div>
 
-    <!-- AprilTags will be dynamically loaded here -->
+    <!-- AprilTag markers - loaded dynamically by tagsloader.js -->
     <div id="apriltags-container"></div>
 
     <!-- MapLibre GL JS library -->
     <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
-    
-    <!-- YAML parser library -->
+
+    <!-- YAML parser (used by tagsloader.js) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
-    
-    <!-- Load AprilTags script -->
+
+    <!-- Loads and positions AprilTag images for eye-tracker calibration -->
     <script src="../../tagsloader.js"></script>
 
+    <!-- Layer definitions and legend logic -->
     <script src="layers.js"></script>
 
-    <!-- Your map control script -->
+    <!-- Main map control and eye-tracking logic -->
     <script src="map.js"></script>
 
 </body>
