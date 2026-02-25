@@ -5,7 +5,7 @@
 const CONFIG = {
     startLat:  49.593777,
     startLng:  17.250879,
-    startZoom: 16,
+    startZoom: 11,
 };
 
 // ==========================================
@@ -186,8 +186,12 @@ function handleLayerToggle(layerId, tileElement, barElement) {
 }
 
 // ==========================================
-// 8. KEYBOARD SHORTCUT: Return to start
-// Press 'H' at any time to fly back to the starting position and zoom level.
+// 8. KEYBOARD SHORTCUTS
+// H    - fly back to starting position
+// Space - advance to the next slide in the parent testing window.
+//         Uses postMessage because after the user clicks inside the iframe,
+//         keyboard focus shifts there and the parent window stops receiving
+//         keydown events directly.
 // ==========================================
 window.addEventListener('keydown', (e) => {
     if (e.key.toLowerCase() === 'h') {
@@ -199,6 +203,11 @@ window.addEventListener('keydown', (e) => {
             speed:     1,
             curve:     1
         });
+    }
+
+    if (e.code === 'Space') {
+        e.preventDefault(); // Prevent page scrolling
+        window.parent.postMessage('nextSlide', '*'); // Tell parent to advance to next slide
     }
 });
 

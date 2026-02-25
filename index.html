@@ -1,44 +1,245 @@
 <!DOCTYPE html>
-<html>
+<html lang="cs">
 <head>
-    <title>Testování Map</title>
+    <meta charset="UTF-8">
+    <title>Eye-Tracking Testování</title>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
-        iframe { width: 100%; height: 100%; border: none; }
+        /* ==========================================
+           BASE
+           ========================================== */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background-color: #222;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+
+        /* ==========================================
+           SCREENS
+           Text slides shown between maps.
+           ========================================== */
+        .screen {
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0; left: 0;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Show/hide utility classes */
+        .hidden { display: none !important; }
+        .active { display: flex !important; }
+
+        /* ==========================================
+           MAP IFRAME
+           Fills the entire screen when a map is active.
+           ========================================== */
+        iframe {
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0; left: 0;
+            border: none;
+            display: none;
+        }
+
+        /* ==========================================
+           TYPOGRAPHY
+           ========================================== */
+        h1 { font-size: 3em; color: #4facf7; margin-bottom: 20px; }
+        p  { font-size: 1.5em; max-width: 800px; line-height: 1.5; margin-bottom: 30px; }
+
+        .instruction-key {
+            background: #444;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #00ff00;
+        }
+
+        /* ==========================================
+           CALIBRATION IMAGE
+           ========================================== */
+        #calibration-img {
+            max-width: 90vw;
+            max-height: 70vh;
+            border: 2px solid #555;
+            object-fit: contain;
+            background: #fff;
+        }
+
+        /* ==========================================
+           DOWNLOAD BUTTON
+           ========================================== */
+        #download-btn {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            background-color: #00ff00;
+            color: #000;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            margin-top: 20px;
+        }
+        #download-btn:hover { background-color: #00cc00; }
     </style>
 </head>
 <body>
 
-    <iframe id="viewer" src="maps/A_A/index.html"></iframe>
+    <!-- Slide 1: Introduction -->
+    <div id="slide-intro" class="screen active">
+        <h1>Vítejte v testování webových map</h1>
+        <p>V tomto testu si projdete několik mapových variant. Vaším úkolem bude plnit zadané instrukce.</p>
+        <p>Nejprve vás čeká kalibrace očí, poté tréninková mapa a nakonec 4 testovací mapy.</p>
+        <p>Pro <b>přechod na další část</b> kdykoliv stiskněte klávesu <span class="instruction-key">Mezerník</span>.</p>
+    </div>
+
+    <!-- Slide 2: Eye-tracker calibration -->
+    <div id="slide-calibration" class="screen">
+        <p>Prosím, podívejte se postupně na všechny terče na obrazovce pro kalibraci brýlí.</p>
+        <img id="calibration-img" src="kalibrace.png" alt="Kalibrační terče">
+        <p style="margin-top: 20px;">Až budete připraveni, stiskněte <span class="instruction-key">Mezerník</span> pro spuštění tréninku.</p>
+    </div>
+
+    <!-- Map iframe - all maps are loaded here one by one -->
+    <iframe id="map-frame" src=""></iframe>
+
+    <!-- Slide 3: End screen with CSV download -->
+    <div id="slide-outro" class="screen">
+        <h1>Test je u konce</h1>
+        <p>Moc děkujeme za Vaši účast a spolupráci!</p>
+        <button id="download-btn">Stáhnout výsledky (.csv)</button>
+    </div>
 
     <script>
-        // Cesty k vašim jednotlivým HTML souborům
-        const pages = [
-            'maps/A_A/index.html',
-            'maps/A_P/index.html',
-            'maps/P_A/index.html',
-            'maps/P_P/index.html'
+        // ==========================================
+        // 1. SEQUENCE CONFIGURATION
+        // Defines the order of slides and maps shown during the test.
+        // type 'html' = text screen, type 'iframe' = map loaded in the iframe.
+        // ==========================================
+        const sequence = [
+            { type: 'html',   id: 'slide-intro',                 name: 'Uvod'      },
+            { type: 'html',   id: 'slide-calibration',           name: 'Kalibrace' },
+            { type: 'iframe', src: 'maps/0_Training/index.html', name: 'Trening_0' },
+            { type: 'iframe', src: 'maps/1_P_P/index.html',      name: 'Map_P_P'   },
+            { type: 'iframe', src: 'maps/2_P_A/index.html',      name: 'Map_P_A'   },
+            { type: 'iframe', src: 'maps/3_A_P/index.html',      name: 'Map_A_P'   },
+            { type: 'iframe', src: 'maps/4_A_A/index.html',      name: 'Map_A_A'   },
+            { type: 'html',   id: 'slide-outro',                 name: 'Konec'     }
         ];
-        
-        let current = 0;
-        const iframe = document.getElementById('viewer');
 
-        document.addEventListener('keydown', (e) => {
-            // Šipka vpravo nebo Mezerník přepne na další
-            if (e.key === 'ArrowRight' || e.code === 'Space') {
-                if (current < pages.length - 1) {
-                    current++;
-                    iframe.src = pages[current];
-                }
+        let currentIndex = 0;
+        let startTime    = Date.now();
+        const results    = [];
+        const iframe     = document.getElementById('map-frame');
+
+        // ==========================================
+        // 2. SHOW SLIDE
+        // Hides all screens and shows the one at the given index.
+        // ==========================================
+        function showSlide(index) {
+            document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+            iframe.style.display = 'none';
+
+            const slide = sequence[index];
+
+            if (slide.type === 'html') {
+                document.getElementById(slide.id).classList.add('active');
+            } else if (slide.type === 'iframe') {
+                iframe.src           = slide.src;
+                iframe.style.display = 'block';
+                window.focus(); // Attempt to keep focus in parent window
             }
-            // Šipka vlevo vrátí zpět
-            else if (e.key === 'ArrowLeft') {
-                if (current > 0) {
-                    current--;
-                    iframe.src = pages[current];
-                }
+
+            startTime = Date.now(); // Reset timer for the new slide
+        }
+
+        // ==========================================
+        // 3. ADVANCE SLIDE
+        // Records time spent on the current slide and moves to the next one.
+        // ==========================================
+        function advanceSlide() {
+            const currentSlide    = sequence[currentIndex];
+            const durationSeconds = ((Date.now() - startTime) / 1000).toFixed(2);
+
+            // Record time for maps and calibration (skip intro and outro)
+            if (currentSlide.type === 'iframe' || currentSlide.name === 'Kalibrace') {
+                results.push({
+                    faze:        currentSlide.name,
+                    cas_sekundy: durationSeconds
+                });
+            }
+
+            if (currentIndex < sequence.length - 1) {
+                currentIndex++;
+                showSlide(currentIndex);
+            }
+        }
+
+        // ==========================================
+        // 4. KEYBOARD LISTENER (parent window)
+        // Handles Spacebar when focus is in the parent window (text slides).
+        // When a map iframe is active, the map's map.js sends a 'nextSlide'
+        // message via postMessage instead (see section 5 and map.js).
+        // ==========================================
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault(); // Prevent page scrolling
+                advanceSlide();
             }
         });
+
+        // ==========================================
+        // 5. MESSAGE LISTENER (from map iframes)
+        // Each map.js sends window.parent.postMessage('nextSlide', '*') when
+        // Spacebar is pressed inside the iframe. This is necessary because
+        // keyboard focus moves into the iframe after the user clicks on the map,
+        // making the parent window's keydown listener unreachable.
+        // ==========================================
+        window.addEventListener('message', (event) => {
+            if (event.data === 'nextSlide') {
+                advanceSlide();
+            }
+        });
+
+        // ==========================================
+        // 6. CSV EXPORT
+        // Downloads recorded times as a CSV file compatible with Czech Excel
+        // (semicolon separator, comma as decimal separator).
+        // ==========================================
+        document.getElementById('download-btn').addEventListener('click', () => {
+            let csvContent = 'Faze;Cas_sekundy\n';
+
+            results.forEach(row => {
+                const timeStr = row.cas_sekundy.replace('.', ','); // Czech Excel decimal format
+                csvContent += `${row.faze};${timeStr}\n`;
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url  = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href  = url;
+
+            // Filename includes current date and time
+            const dateStr = new Date().toISOString().split('T')[0];
+            const timeStr = new Date().toTimeString().split(' ')[0].replace(/:/g, '-');
+            link.download = `vysledky_${dateStr}_${timeStr}.csv`;
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
     </script>
 </body>
 </html>
