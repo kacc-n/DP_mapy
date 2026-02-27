@@ -20,7 +20,7 @@ const map = new maplibregl.Map({
     style:       'https://tiles.versatiles.org/assets/styles/colorful/style.json',
     center:      [CONFIG.startLng, CONFIG.startLat],
     zoom:        CONFIG.startZoom,
-    interactive: true // Disables mouse/keyboard/touch interactions
+    interactive: false // Disables mouse/keyboard/touch interactions
 });
 
 // ==========================================

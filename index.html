@@ -78,8 +78,24 @@
         }
 
         /* ==========================================
-           DOWNLOAD BUTTON
+           BUTTONS
            ========================================== */
+
+        /* Google Forms questionnaire button */
+        #forms-btn {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            background-color: #4facf7;
+            color: #000;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            margin-bottom: 15px;
+        }
+        #forms-btn:hover { background-color: #2e8fcf; }
+
+        /* CSV download button */
         #download-btn {
             padding: 15px 30px;
             font-size: 1.2em;
@@ -89,7 +105,7 @@
             font-weight: bold;
             cursor: pointer;
             border: none;
-            margin-top: 20px;
+            margin-top: 10px;
         }
         #download-btn:hover { background-color: #00cc00; }
     </style>
@@ -114,10 +130,13 @@
     <!-- Map iframe - all maps are loaded here one by one -->
     <iframe id="map-frame" src=""></iframe>
 
-    <!-- Slide 3: End screen with CSV download -->
+    <!-- Slide 3: End screen with questionnaire link and CSV download -->
     <div id="slide-outro" class="screen">
         <h1>Test je u konce</h1>
         <p>Moc děkujeme za Vaši účast a spolupráci!</p>
+        <a href="https://forms.gle/GYKb6tmUr8p64JDY9" target="_blank">
+            <button id="forms-btn">Vyplnit dotazník</button>
+        </a>
         <button id="download-btn">Stáhnout výsledky (.csv)</button>
     </div>
 
