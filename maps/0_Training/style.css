@@ -146,7 +146,7 @@ body.hide-tags .apriltag { display: none; }
    Centers the MapLibre scale control at the bottom of the screen
    ========================================== */
 .maplibregl-ctrl-bottom-left {
-    left: 50%;
+    left: 60%;
     transform: translateX(-50%);
 }
 
