@@ -64,8 +64,8 @@ This application runs in a web browser but requires a specific hardware and soft
 
 2. **Launch the application**
    - Open a web browser on the same computer
-   - Navigate to the project GitHub Pages URL: [GitHub Pages link](PASTE_YOUR_URL_HERE)
-   - Or if running locally, open `index.html` (the root one, not inside `maps/`)
+   - Navigate to the project GitHub Pages URL: [GitHub Pages link](https://kacc-n.github.io/DP_mapy/)
+   - Or if running locally, open `index.html` (the root one, not inside `maps/` folder)
 
 ---
 
@@ -158,3 +158,5 @@ This project was created as part of a Master's thesis at the Department of Geoin
 ---
 
 ## License
+
+See LICENSE.txt file.
