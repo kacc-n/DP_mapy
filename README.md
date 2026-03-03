@@ -106,6 +106,7 @@ kalibrace.png           # Calibration image shown before the test for offset cor
 style.css               # Shared styles for all maps (except for the training one)
 tagsloader.js           # Loads and positions AprilTags from YAML config
 README.md
+LICENSE.txt
 
 data/                   # GeoJSON data files shared across all maps
 my_screen/              # AprilTag layout (surface_layout.yaml + tag_*.png images) - generated from GazeDeck Console

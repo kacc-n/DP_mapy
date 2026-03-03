@@ -115,16 +115,16 @@
     <!-- Slide 1: Introduction -->
     <div id="slide-intro" class="screen active">
         <h1>Vítejte v testování webových map</h1>
-        <p>V tomto testu si projdete několik mapových variant. Vaším úkolem bude plnit zadané instrukce.</p>
-        <p>Nejprve vás čeká kalibrace očí, poté tréninková mapa a nakonec 4 testovací mapy.</p>
+        <p>V tomto testu si projdete několik mapových variant kombinujících pasivní a aktivní prvky ovládání. Vaším úkolem bude plnit zadané instrukce.</p>
+        <p>Nejprve vás čeká kalibrace, poté tréninková mapa a nakonec 4 testovací mapy.</p>
         <p>Pro <b>přechod na další část</b> kdykoliv stiskněte klávesu <span class="instruction-key">Mezerník</span>.</p>
     </div>
 
     <!-- Slide 2: Eye-tracker calibration -->
     <div id="slide-calibration" class="screen">
-        <p>Prosím, podívejte se postupně na všechny terče na obrazovce pro kalibraci brýlí.</p>
+        <p>Prosím, následujte instrukce autora práce.</p>
         <img id="calibration-img" src="kalibrace.png" alt="Kalibrační terče">
-        <p style="margin-top: 20px;">Až budete připraveni, stiskněte <span class="instruction-key">Mezerník</span> pro spuštění tréninku.</p>
+        <p style="margin-top: 20px;">Až budete vyzváni, stiskněte <span class="instruction-key">Mezerník</span> pro spuštění tréninku.</p>
     </div>
 
     <!-- Map iframe - all maps are loaded here one by one -->
@@ -133,11 +133,42 @@
     <!-- Slide 3: End screen with questionnaire link and CSV download -->
     <div id="slide-outro" class="screen">
         <h1>Test je u konce</h1>
-        <p>Moc děkujeme za Vaši účast a spolupráci!</p>
+        <p>Moc děkuji za Vaši účast, spolupráci při testování a za zpětnou vazbu a poznatky!</p>
         <a href="https://forms.gle/GYKb6tmUr8p64JDY9" target="_blank">
             <button id="forms-btn">Vyplnit dotazník</button>
         </a>
         <button id="download-btn">Stáhnout výsledky (.csv)</button>
+    </div>
+
+    <!-- Instructions for each map type -->
+    <div id="slide-instr-training" class="screen">
+    <h1>Tréninková mapa</h1>
+    <p>Tato mapa slouží k seznámení s ovládáním. Pohybujte se pohledem mimo obrazovku a vrstvy v legendě vybíráte pohledem.</p>
+    <p>Stiskněte <span class="instruction-key">Mezerník</span> pro spuštění.</p>
+    </div>
+
+    <div id="slide-instr-pp" class="screen"> 
+    <h1>Verze: Pasivní- Pasivní </h1>
+    <p>Mapou pohybujete myší a s legendou interagujete také pomocí myši.</p>
+    <p>Stiskněte <span class="instruction-key">Mezerník</span> pro spuštění.</p>
+    </div>
+
+    <div id="slide-instr-pa" class="screen">
+    <h1>Verze: Pasivní- Aktivní </h1>
+    <p>Mapou pohybujete myší a vrstvy v legendě vybíráte pohledem.</p>
+    <p>Stiskněte <span class="instruction-key">Mezerník</span> pro spuštění.</p>
+    </div>
+
+    <div id="slide-instr-ap" class="screen">
+    <h1>Verze: Aktivní- Pasivní </h1>
+    <p>Mapou pohybujete pohledem mimo obrazovku a s legendou interagujete pomocí myši.</p>
+    <p>Stiskněte <span class="instruction-key">Mezerník</span> pro spuštění.</p>
+    </div>
+
+    <div id="slide-instr-aa" class="screen">
+    <h1>Verze: Aktivní- Aktivní </h1>
+    <p>Mapou pohybujte pohledem mimo obrazovku a vrstvy v legendě vybíráte pohledem.</p>
+    <p>Stiskněte <span class="instruction-key">Mezerník</span> pro spuštění.</p>
     </div>
 
     <script>
@@ -149,10 +180,15 @@
         const sequence = [
             { type: 'html',   id: 'slide-intro',                 name: 'Uvod'      },
             { type: 'html',   id: 'slide-calibration',           name: 'Kalibrace' },
+            { type: 'html',   id: 'slide-instr-training',        name: 'Instr_0'   },
             { type: 'iframe', src: 'maps/0_Training/index.html', name: 'Trening_0' },
-            { type: 'iframe', src: 'maps/1_P_P/index.html',      name: 'Map_P_P'   },
+            { type: 'html',   id: 'slide-instr-pp',              name: 'Instr_1'   },
+            { type: 'iframe', src: 'maps/1_P_P/index.html',      name: 'Map_P_P'   },           
+            { type: 'html',   id: 'slide-instr-pa',              name: 'Instr_2'   },
             { type: 'iframe', src: 'maps/2_P_A/index.html',      name: 'Map_P_A'   },
-            { type: 'iframe', src: 'maps/3_A_P/index.html',      name: 'Map_A_P'   },
+            { type: 'html',   id: 'slide-instr-ap',              name: 'Instr_3'   },
+            { type: 'iframe', src: 'maps/3_A_P/index.html',      name: 'Map_A_P'   },           
+            { type: 'html',   id: 'slide-instr-aa',              name: 'Instr_4'   },
             { type: 'iframe', src: 'maps/4_A_A/index.html',      name: 'Map_A_A'   },
             { type: 'html',   id: 'slide-outro',                 name: 'Konec'     }
         ];
