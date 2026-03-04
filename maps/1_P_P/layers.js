@@ -4,13 +4,13 @@
 // and the label shown in the legend.
 // ==========================================
 const myLayers = [
-    { file: 'building_Olomouc.json',           color: '#a19d9d',   typ: 'fill',   legend: 'Budovy'      },
-    { file: 'leisure_park_Olomouc.json',        color: '#9be692e0', typ: 'fill',   legend: 'Parky'       },
-    { file: 'highway_pedestrian_Olomouc.json',  color: '#876767',   typ: 'line',   legend: 'Pěší zóny'  },
-    { file: 'highway_cycleway_Olomouc.json',    color: '#fa78ef',   typ: 'line',   legend: 'Cyklostezky' },
-    { file: 'amenity_parking_Olomouc.json',     color: '#393939',   typ: 'circle', legend: 'Parkoviště'  },
-    { file: 'amenity_restaurant_Olomouc.json',  color: '#f3ad3c',   typ: 'circle', legend: 'Restaurace'  },
-    { file: 'amenity_cafe_Olomouc.json',        color: '#8d5126',   typ: 'circle', legend: 'Kavárny'     }
+    { file: 'building_Olomouc.json',           color: '#a19d9d',   selectedColor: '#7a7676',   typ: 'fill',   legend: 'Budovy'      },
+    { file: 'amenity_parking_Olomouc.json',     color: '#6a88a8',   selectedColor: '#5a7da0',   typ: 'fill',   legend: 'Parkoviště'  },
+    { file: 'leisure_park_Olomouc.json',        color: '#9be692e0', selectedColor: '#5eaf5c',   typ: 'fill',   legend: 'Parky'       },
+    { file: 'highway_pedestrian_Olomouc.json',  color: '#876767',   selectedColor: '#6b4e4e',   typ: 'line',   legend: 'Pěší zóny'  },
+    { file: 'highway_cycleway_Olomouc.json',    color: '#fa78ef',   selectedColor: '#d93ec8',   typ: 'line',   legend: 'Cyklostezky' },
+    { file: 'amenity_restaurant_Olomouc.json',  color: '#f3ad3c',   selectedColor: '#d4891a',   typ: 'circle', legend: 'Restaurace'  },
+    { file: 'amenity_cafe_Olomouc.json',        color: '#8d5126',   selectedColor: '#814218',   typ: 'circle', legend: 'Kavárny'     }
 ];
 
 // Tracks which layer is currently highlighted (null = none)
@@ -179,15 +179,22 @@ function toggleLayerHighlight(layerId, map) {
 
         // Apply opacity to the map layer
         if (map.getLayer(id)) {
-            if (layer.typ === 'fill') {
-                map.setPaintProperty(id, 'fill-opacity', fillOpacity);
-            } else if (layer.typ === 'line') {
-                map.setPaintProperty(id, 'line-opacity', lineOpacity);
-            } else if (layer.typ === 'circle') {
-                map.setPaintProperty(id, 'circle-opacity',        lineOpacity);
-                map.setPaintProperty(id, 'circle-stroke-opacity', lineOpacity);
-            }
+        if (layer.typ === 'fill') {
+            map.setPaintProperty(id, 'fill-opacity', fillOpacity);
+            map.setPaintProperty(id, 'fill-color', isSelected ? layer.selectedColor : layer.color);
+        } else if (layer.typ === 'line') {
+            map.setPaintProperty(id, 'line-opacity', lineOpacity);
+            map.setPaintProperty(id, 'line-color', isSelected ? layer.selectedColor : layer.color);
+        } else if (layer.typ === 'circle') {
+            map.setPaintProperty(id, 'circle-opacity',        lineOpacity);
+            map.setPaintProperty(id, 'circle-stroke-opacity', lineOpacity);
+            map.setPaintProperty(id, 'circle-color', isSelected ? layer.selectedColor : layer.color);
         }
+    }
+
+        // Update legend symbol color to match
+        const symbol = document.querySelector(`#tile-${id} .legend-symbol`);
+        if (symbol) symbol.style.backgroundColor = isSelected ? layer.selectedColor : layer.color;
 
         // Update legend tile active state
         if (tile) tile.classList.toggle('active', isSelected);
