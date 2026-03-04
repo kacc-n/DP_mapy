@@ -74,9 +74,9 @@ function connectGazeDeck() {
         // Update gaze dot position even though gaze doesn't control the map
         if (!isNaN(x) && !isNaN(y)) {
             updateGaze(x, y);
-        } else {
-            console.warn('⚠️ Invalid gaze data received:', { x, y });
-        }
+/*         } else {
+            console.warn('⚠️ Invalid gaze data received:', { x, y }); //uncomment for debugging invalid data issues
+ */        }
     };
 
     wsConnection.onerror = () => {

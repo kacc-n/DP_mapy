@@ -304,9 +304,9 @@ function connectGazeDeck() {
 
         if (!isNaN(x) && !isNaN(y)) {
             updateGaze(x, y);
-        } else {
-            console.warn('⚠️ Invalid gaze data received:', { x, y });
-        }
+/*         } else {
+            console.warn('⚠️ Invalid gaze data received:', { x, y }); //uncomment for debugging invalid data issues
+ */        }
     };
 
     wsConnection.onerror = () => {
