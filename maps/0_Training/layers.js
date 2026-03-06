@@ -63,7 +63,6 @@ async function loadData(map) {
             'minzoom': 12,
             'paint': {
                 'circle-color': colorExpression,
-                // Circles grow from 5px at zoom 12 to 10px at zoom 16
                 'circle-radius': 5,
                 'circle-stroke-width': 1.5,
                 'circle-stroke-color': '#ffffff'
@@ -78,7 +77,7 @@ async function loadData(map) {
             'id': 'budovy-up-labels',
             'source': 'budovy-up',
             'type': 'symbol',
-            'minzoom': 15,
+            'minzoom': 18,
             'layout': {
                 'text-field': ['get', 'nazevCZ'],
                 'text-font': ['noto_sans_regular'], // Must match the VersaTiles glyph name exactly

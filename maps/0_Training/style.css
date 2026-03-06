@@ -237,17 +237,6 @@ body.hide-tags .apriltag { display: none; }
     width: 24px;
 }
 
-/* Square symbol (used for fill layers like buildings or parks) */
-.symbol-fill {
-    height: 18px;
-    border-radius: 3px;
-}
-
-/* Line symbol (used for road/path layers) */
-.symbol-line {
-    width: 100%;
-}
-
 /* Circle symbol (used for point layers) */
 .symbol-circle {
     height: 24px;

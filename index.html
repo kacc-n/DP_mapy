@@ -181,7 +181,7 @@
             { type: 'html',   id: 'slide-intro',                 name: 'Uvod'      },
             { type: 'html',   id: 'slide-calibration',           name: 'Kalibrace' },
             { type: 'html',   id: 'slide-instr-training',        name: 'Instr_0'   },
-            { type: 'iframe', src: 'maps/0_Training/index.html', name: 'Trening_0' },
+            { type: 'iframe', src: 'maps/0_Training/index.html', name: 'Training_0' },
             { type: 'html',   id: 'slide-instr-pp',              name: 'Instr_1'   },
             { type: 'iframe', src: 'maps/1_P_P/index.html',      name: 'Map_P_P'   },           
             { type: 'html',   id: 'slide-instr-pa',              name: 'Instr_2'   },
@@ -227,8 +227,8 @@
             const currentSlide    = sequence[currentIndex];
             const durationSeconds = ((Date.now() - startTime) / 1000).toFixed(2);
 
-            // Record time for maps and calibration (skip intro and outro)
-            if (currentSlide.type === 'iframe' || currentSlide.name === 'Kalibrace') {
+            // Record time for maps only, not for text slides
+            if (currentSlide.type === 'iframe') {
                 results.push({
                     faze:        currentSlide.name,
                     cas_sekundy: durationSeconds

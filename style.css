@@ -237,7 +237,8 @@ body.hide-tags .apriltag { display: none; }
 
 /* Circle symbol (used for point layers) */
 .symbol-circle {
-    height: 24px;
+    height: 16px;
+    width: 16px;
     border-radius: 50%;
 }
 
