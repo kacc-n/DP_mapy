@@ -4,13 +4,13 @@
 // and the label shown in the legend.
 // ==========================================
 const myLayers = [
-    { file: 'building_Olomouc.json',           color: '#a19d9d',   selectedColor: '#7a7676',   typ: 'fill',   legend: 'Budovy'      },
-    { file: 'amenity_parking_Olomouc.json',     color: '#6a88a8',   selectedColor: '#5a7da0',   typ: 'fill',   legend: 'Parkoviště'  },
-    { file: 'leisure_park_Olomouc.json',        color: '#9be692e0', selectedColor: '#5eaf5c',   typ: 'fill',   legend: 'Parky'       },
-    { file: 'highway_pedestrian_Olomouc.json',  color: '#876767',   selectedColor: '#6b4e4e',   typ: 'line',   legend: 'Pěší zóny'  },
-    { file: 'highway_cycleway_Olomouc.json',    color: '#fa78ef',   selectedColor: '#d93ec8',   typ: 'line',   legend: 'Cyklostezky' },
-    { file: 'amenity_restaurant_Olomouc.json',  color: '#f3ad3c',   selectedColor: '#d4891a',   typ: 'circle', legend: 'Restaurace'  },
-    { file: 'amenity_cafe_Olomouc.json',        color: '#8d5126',   selectedColor: '#814218',   typ: 'circle', legend: 'Kavárny'     }
+    { file: 'building_Olomouc.geojson',           color: '#a19d9d',   selectedColor: '#7a7676',   typ: 'fill',   legend: 'Budovy'      },
+    { file: 'amenity_parking_Olomouc.geojson',     color: '#6a88a8',   selectedColor: '#5a7da0',   typ: 'fill',   legend: 'Parkoviště'  },
+    { file: 'leisure_park_Olomouc.geojson',        color: '#9be692e0', selectedColor: '#5eaf5c',   typ: 'fill',   legend: 'Parky'       },
+    { file: 'highway_pedestrian_Olomouc.geojson',  color: '#876767',   selectedColor: '#6b4e4e',   typ: 'line',   legend: 'Pěší zóny'  },
+    { file: 'highway_cycleway_Olomouc.geojson',    color: '#fa78ef',   selectedColor: '#d93ec8',   typ: 'line',   legend: 'Cyklostezky' },
+    { file: 'amenity_restaurant_Olomouc.geojson',  color: '#f3ad3c',   selectedColor: '#d4891a',   typ: 'circle', legend: 'Restaurace'  },
+    { file: 'amenity_cafe_Olomouc.geojson',        color: '#8d5126',   selectedColor: '#814218',   typ: 'circle', legend: 'Kavárny'     }
 ];
 
 // Tracks which layer is currently highlighted (null = none)
@@ -24,7 +24,7 @@ let currentHighlightId = null;
 // ==========================================
 async function loadData(map) {
     for (const layer of myLayers) {
-        const id = layer.file.replace('.json', '');
+        const id = layer.file.replace('.geojson', '');
 
         try {
             const res  = await fetch(`../../data/${layer.file}`);
@@ -126,7 +126,7 @@ function initEyeLegend(map) {
     list.innerHTML = ''; // Clear any existing tiles
 
     myLayers.forEach(layer => {
-        const id = layer.file.replace('.json', '');
+        const id = layer.file.replace('.geojson', '');
 
         const tile = document.createElement('div');
         tile.className = 'legend-tile';
@@ -166,7 +166,7 @@ function toggleLayerHighlight(layerId, map) {
     currentHighlightId = (currentHighlightId === layerId) ? null : layerId;
 
     myLayers.forEach(layer => {
-        const id   = layer.file.replace('.json', '');
+        const id   = layer.file.replace('.geojson', '');
         const tile = document.getElementById(`tile-${id}`);
 
         // Determine opacity: selected layer gets full opacity, others get dimmed

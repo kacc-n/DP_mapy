@@ -34,8 +34,8 @@ async function loadData(map) {
     }
 
     try {
-        const res = await fetch('../../data/BudovyUP.json');
-        if (!res.ok) throw new Error('Data file not found: BudovyUP.json');
+        const res = await fetch('../../data/BudovyUP.geojson');
+        if (!res.ok) throw new Error('Data file not found: BudovyUP.geojson');
         const geojsonData = await res.json();
 
         // Build a MapLibre 'match' expression to assign colors based on FAKULTA property
