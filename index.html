@@ -115,7 +115,7 @@
     <!-- Slide 1: Introduction -->
     <div id="slide-intro" class="screen active">
         <h1>Vítejte v testování webových map</h1>
-        <p>V tomto testu si projdete několik mapových variant kombinujících prvky ovládání myší (pasivní varianta) a pohledem (aktivní varianta). Vaším úkolem bude plnit zadané instrukce.</p>
+        <p>V tomto testu si projdete několik mapových variant kombinujících prvky ovládání manuálně (myší) a pohledem (gaze). Vaším úkolem bude plnit zadané instrukce.</p>
         <p>Nejprve vás čeká kalibrace, poté tréninková mapa a nakonec 4 testovací mapy.</p>
         <p>Pro <b>přechod na další část</b> kdykoliv stiskněte klávesu <span class="instruction-key">Mezerník</span>.</p>
     </div>
@@ -148,25 +148,25 @@
     </div>
 
     <div id="slide-instr-pp" class="screen"> 
-    <h1>Verze: Pasivní - Pasivní </h1>
+    <h1>Verze: Manualní - Manualní </h1>
     <p>Mapou pohybujete myší a s legendou interagujete také pomocí myši.</p>
     <p>Stiskněte <span class="instruction-key">Mezerník</span> pro spuštění.</p>
     </div>
 
     <div id="slide-instr-pa" class="screen">
-    <h1>Verze: Pasivní - Aktivní </h1>
+    <h1>Verze: Manualní - Gaze </h1>
     <p>Mapou pohybujete myší a vrstvy v legendě vybíráte pohledem.</p>
     <p>Stiskněte <span class="instruction-key">Mezerník</span> pro spuštění.</p>
     </div>
 
     <div id="slide-instr-ap" class="screen">
-    <h1>Verze: Aktivní - Pasivní </h1>
+    <h1>Verze: Gaze - Manualní </h1>
     <p>Mapou pohybujete pohledem mimo obrazovku a s legendou interagujete pomocí myši.</p>
     <p>Stiskněte <span class="instruction-key">Mezerník</span> pro spuštění.</p>
     </div>
 
     <div id="slide-instr-aa" class="screen">
-    <h1>Verze: Aktivní - Aktivní </h1>
+    <h1>Verze: Gaze - Gaze </h1>
     <p>Mapou pohybujte pohledem mimo obrazovku a vrstvy v legendě vybíráte pohledem.</p>
     <p>Stiskněte <span class="instruction-key">Mezerník</span> pro spuštění.</p>
     </div>
@@ -183,13 +183,13 @@
             { type: 'html',   id: 'slide-instr-training',        name: 'Instr_0'   },
             { type: 'iframe', src: 'maps/0_Training/index.html', name: 'Training_0' },
             { type: 'html',   id: 'slide-instr-pp',              name: 'Instr_1'   },
-            { type: 'iframe', src: 'maps/1_P_P/index.html',      name: 'Map_P_P'   },           
+            { type: 'iframe', src: 'maps/1_M_M/index.html',      name: 'Map_M_M'   },           
             { type: 'html',   id: 'slide-instr-pa',              name: 'Instr_2'   },
-            { type: 'iframe', src: 'maps/2_P_A/index.html',      name: 'Map_P_A'   },
+            { type: 'iframe', src: 'maps/2_M_G/index.html',      name: 'Map_M_G'   },
             { type: 'html',   id: 'slide-instr-ap',              name: 'Instr_3'   },
-            { type: 'iframe', src: 'maps/3_A_P/index.html',      name: 'Map_A_P'   },           
+            { type: 'iframe', src: 'maps/3_G_M/index.html',      name: 'Map_G_M'   },           
             { type: 'html',   id: 'slide-instr-aa',              name: 'Instr_4'   },
-            { type: 'iframe', src: 'maps/4_A_A/index.html',      name: 'Map_A_A'   },
+            { type: 'iframe', src: 'maps/4_G_G/index.html',      name: 'Map_G_G'   },
             { type: 'html',   id: 'slide-outro',                 name: 'Konec'     }
         ];
 
