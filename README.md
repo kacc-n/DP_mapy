@@ -26,10 +26,10 @@ The testing session consists of four map variants, each combining gaze and mouse
 
 | Variant | Folder | Panning & Zoom | Legend |
 |---------|--------|----------------|--------|
-| Passive–Passive | `1_M_M` | 🖱️ Mouse | 🖱️ Mouse click |
-| Passive–Active  | `2_M_G` | 🖱️ Mouse | 👁️ Gaze dwell  |
-| Active–Passive  | `3_G_M` | 👁️ Gaze  | 🖱️ Mouse click |
-| Active–Active   | `4_G_G` | 👁️ Gaze  | 👁️ Gaze dwell  |
+| Manual-Manual | `1_M_M` | 🖱️ Mouse | 🖱️ Mouse click |
+| Manual-Gaze  | `2_M_G` | 🖱️ Mouse | 👁️ Gaze dwell  |
+| Gaze-Manual  | `3_G_M` | 👁️ Gaze  | 🖱️ Mouse click |
+| Gaze-Gaze   | `4_G_G` | 👁️ Gaze  | 👁️ Gaze dwell  |
 
 A training map (`0_Training`) is shown before the test variants so the participant can get familiar with the controls.
 
