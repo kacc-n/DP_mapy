@@ -12,7 +12,7 @@ It is a web-based application for user testing of different map control approach
 - **Gaze Zooming**: A two-step zoom system designed to prevent the "Midas touch" problem
     1. Fixate gaze on the center of the screen for 1 second
     2. Look **up** to Zoom In or **down** to Zoom Out
-- **Mouse Panning & Zooming**: Standard scroll and drag interaction (used in passive-movement variants)
+- **Mouse Panning & Zooming**: Standard scroll and drag interaction (used in manual-movement variants)
 - **Legend Interaction**: Layer highlighting via either gaze dwell (1 second) or mouse click depending on the map variant
 - **Restaurant Labels**: Text labels showing name and seating capacity, visible only when the restaurant layer is selected
 - **Visual Feedback**: Real-time active edge zone highlighting
@@ -71,7 +71,7 @@ This application runs in a web browser but requires a specific hardware and soft
 
 ## Controls
 
-### Gaze controls (used in Active variants)
+### Gaze controls (used in Gaze variants)
 
 | Action | Gaze Gesture |
 |--------|--------------|
@@ -81,7 +81,7 @@ This application runs in a web browser but requires a specific hardware and soft
 | **Zoom out** | After zoom activation, look at the **lower** half of the screen. |
 | **Select legend layer** | Look at a legend tile for 1 second until the dwell bar fills. |
 
-### Mouse controls (used in Passive variants)
+### Mouse controls (used in Manual variants)
 
 | Action | Input |
 |--------|-------|
