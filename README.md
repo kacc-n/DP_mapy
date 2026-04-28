@@ -154,7 +154,10 @@ maps/
 
 This project was created as part of a Master's thesis at the Department of Geoinformatics, Palacký University in Olomouc.
 
-- **Kateřina Sazimová** — Development & Testing
+**Kateřina Sazimová** 
+Development & Testing
+Contact: katerina.sazimova@seznam.cz
+
 
 ---
 
